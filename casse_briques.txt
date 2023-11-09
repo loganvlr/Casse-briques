@@ -1,0 +1,27 @@
+Ce qu'il faut faire pour le casse brique :
+I - Ecran d'accueil
+    1 - Afficher le titre du jeu
+    2 - Afficher le bouton "Jouer"
+        A - Afficher le bouton "Niveau 1"
+        B - Afficher le bouton "Niveau 2"
+        C - Afficher le bouton "Niveau 3"
+        D - Afficher le mode de jeu "IA" (Au lieu d'avoir simplement un mur en face, il y aura une IA qui jouera contre le joueur. Elle protègera son mur et essayera de détruire celui du joueur)
+    3 - Afficher le bouton "Options"
+    4 - Afficher le bouton "Quitter"
+    5 - Afficher le bouton "Aide"
+    6 - Afficher le bouton "Scores"
+II - Ecran de jeu
+    1 - Afficher le bouton "Pause"
+        A - Afficher le bouton "Reprendre"
+        B - Afficher le bouton "Recommencer"
+        C - Afficher le bouton "Quitter"
+        D - Afficher le bouton "Aide"
+    2 - Afficher le score du joueur (qui augmente à chaque fois qu'il touche/casse une brique. Il augmente plus si la brique est de résistance différente)
+    3 - Afficher le nombre de vies du joueur (qui diminue à chaque fois que la balle touche le sol)
+    4 - Afficher les briques
+    5 - Afficher la plateforme du joueur
+    6 - Afficher la balle
+    7 - Afficher le mur de l'IA (si le mode de jeu est "IA")
+    8 - Afficher la plateforme de l'IA (si le mode de jeu est "IA")
+    
+    
