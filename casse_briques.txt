@@ -23,5 +23,7 @@ II - Ecran de jeu
     6 - Afficher la balle
     7 - Afficher le mur de l'IA (si le mode de jeu est "IA")
     8 - Afficher la plateforme de l'IA (si le mode de jeu est "IA")
-    
+
+
+essayer de pouvoir créer des tableaux (+ pouvoir avoir le milieu de chaque partie du tableau, leur taille, etc.)
     
