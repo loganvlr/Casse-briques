@@ -172,35 +172,35 @@ class Accueil:
         screen.blit(self.texteScores.rendu, self.texteScores.coor)
 
 class Niveaux:
+    boutonNiveau1 = Bouton("Niveau1", 200, 50, (125, 160, 202)).centrer(640, 360)
+    texteNiveau1 = Texte("Niveau1", "white").centrer(boutonNiveau1.largeur, boutonNiveau1.hauteur, boutonNiveau1.x, boutonNiveau1.y)
+    boutonNiveau2 = Bouton("Niveau2", 200, 50, (125, 160, 202)).centrer(640, 360, 640, 0)
+    texteNiveau2 = Texte("Niveau2", "white").centrer(boutonNiveau2.largeur, boutonNiveau2.hauteur, boutonNiveau2.x, boutonNiveau2.y)
+    boutonNiveau3 = Bouton("Niveau3", 200, 50, (125, 160, 202)).centrer(640, 360, 0, 360)
+    texteNiveau3 = Texte("Niveau3", "white").centrer(boutonNiveau3.largeur, boutonNiveau3.hauteur, boutonNiveau3.x, boutonNiveau3.y)
+    boutonNiveauIA = Bouton("NiveauIA", 200, 50, (125, 160, 202)).centrer(640, 360, 640, 360)
+    texteNiveauIA = Texte("Niveau IA", "white").centrer(boutonNiveauIA.largeur, boutonNiveauIA.hauteur, boutonNiveauIA.x, boutonNiveauIA.y)
     boutonAccueil = Bouton("Accueil", 200, 50, (125, 160, 202)).centrer(1280, 720)
     texteAccueil = Texte("Accueil", "white").centrer(boutonAccueil.largeur, boutonAccueil.hauteur, boutonAccueil.x, boutonAccueil.y)
-    boutonOptions = Bouton("Options", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 60)
-    texteOptions = Texte("Options", "white").centrer(boutonOptions.largeur, boutonOptions.hauteur, boutonOptions.x, boutonOptions.y)
-    boutonQuitter = Bouton("Quitter", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 120)
-    texteQuitter = Texte("Quitter", "white").centrer(boutonQuitter.largeur, boutonQuitter.hauteur, boutonQuitter.x, boutonQuitter.y)
-    boutonAide = Bouton("Aide", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 180)
-    texteAide = Texte("Aide", "white").centrer(boutonAide.largeur, boutonAide.hauteur, boutonAide.x, boutonAide.y)
-    boutonScores = Bouton("Scores", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 240)
-    texteScores = Texte("Scores", "white").centrer(boutonScores.largeur, boutonScores.hauteur, boutonScores.x, boutonScores.y)
     
-    boutonsNiveaux = [boutonAccueil, boutonOptions, boutonQuitter, boutonAide, boutonScores]
-    textesNiveaux = [texteAccueil, texteOptions, texteQuitter, texteAide, texteScores]
+    boutonsNiveaux = [boutonNiveau1, boutonNiveau2, boutonNiveau3, boutonNiveauIA, boutonAccueil]
+    textesNiveaux = [texteNiveau1, texteNiveau2, texteNiveau3, texteNiveauIA, texteAccueil]
     
     def draw(self, screen):
+        pygame.draw.rect(screen, self.boutonNiveau1.couleur, self.boutonNiveau1.rendu, 0, 20)
+        screen.blit(self.texteNiveau1.rendu, self.texteNiveau1.coor)
+        
+        pygame.draw.rect(screen, self.boutonNiveau2.couleur, self.boutonNiveau2.rendu, 0, 20)
+        screen.blit(self.texteNiveau2.rendu, self.texteNiveau2.coor)
+        
+        pygame.draw.rect(screen, self.boutonNiveau3.couleur, self.boutonNiveau3.rendu, 0, 20)
+        screen.blit(self.texteNiveau3.rendu, self.texteNiveau3.coor)
+        
+        pygame.draw.rect(screen, self.boutonNiveauIA.couleur, self.boutonNiveauIA.rendu, 0, 20)
+        screen.blit(self.texteNiveauIA.rendu, self.texteNiveauIA.coor)
+        
         pygame.draw.rect(screen, self.boutonAccueil.couleur, self.boutonAccueil.rendu, 0, 20)
         screen.blit(self.texteAccueil.rendu, self.texteAccueil.coor)
-
-        pygame.draw.rect(screen, self.boutonOptions.couleur, self.boutonOptions.rendu, 0, 20)
-        screen.blit(self.texteOptions.rendu, self.texteOptions.coor)
-        
-        pygame.draw.rect(screen, self.boutonQuitter.couleur, self.boutonQuitter.rendu, 0, 20)
-        screen.blit(self.texteQuitter.rendu, self.texteQuitter.coor)
-        
-        pygame.draw.rect(screen, self.boutonAide.couleur, self.boutonAide.rendu, 0, 20)
-        screen.blit(self.texteAide.rendu, self.texteAide.coor)
-        
-        pygame.draw.rect(screen, self.boutonScores.couleur, self.boutonScores.rendu, 0, 20)
-        screen.blit(self.texteScores.rendu, self.texteScores.coor)
 
 class Options:
     pass
