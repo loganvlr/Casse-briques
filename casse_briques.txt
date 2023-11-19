@@ -26,4 +26,12 @@ II - Ecran de jeu
 
 
 essayer de pouvoir créer des tableaux (+ pouvoir avoir le milieu de chaque partie du tableau, leur taille, etc.)
-    
+
+
+CHANGER NOM DE CLASSE NIVEAUX NIVEAU
+
+fixer limite pour deplacement plateforme
+
+faire que la balle ne puisse pas rester bloquée dans un coin
+
+on peut avancer la plateforme ?

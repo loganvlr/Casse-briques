@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -97,63 +98,48 @@ class Bouton:
             "Niveaux": Niveaux,
             "Options": Options,
             "Aide": Aide,
-            "Scores": Scores
+            "Scores": Scores,
+            "Niveau1": 1,
+            "Niveau2": 2,
+            "Niveau3": 3,
         }
         if self.nom == "Quitter":
             exit(0)
-        return mapping.get(self.nom, None)
-    
+        return mapping[self.nom]
     
 
-class Interactions:
-    """Classe permettant de gérer les interactions"""
+
+
+# ==================== Pages (Une page est égal à une classe) ====================
+class Accueil:
+
+    def __init__(self):
+        self.boutonJouer = Bouton("Niveaux", 200, 50, (125, 160, 202)).centrer(1280, 720)
+        self.texteJouer = Texte("Jouer", "white").centrer(self.boutonJouer.largeur, self.boutonJouer.hauteur, self.boutonJouer.x, self.boutonJouer.y)
+        self.boutonOptions = Bouton("Options", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 60)
+        self.texteOptions = Texte("Options", "white").centrer(self.boutonOptions.largeur, self.boutonOptions.hauteur, self.boutonOptions.x, self.boutonOptions.y)
+        self.boutonQuitter = Bouton("Quitter", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 120)
+        self.texteQuitter = Texte("Quitter", "white").centrer(self.boutonQuitter.largeur, self.boutonQuitter.hauteur, self.boutonQuitter.x, self.boutonQuitter.y)
+        self.boutonAide = Bouton("Aide", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 180)
+        self.texteAide = Texte("Aide", "white").centrer(self.boutonAide.largeur, self.boutonAide.hauteur, self.boutonAide.x, self.boutonAide.y)
+        self.boutonScores = Bouton("Scores", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 240)
+        self.texteScores = Texte("Scores", "white").centrer(self.boutonScores.largeur, self.boutonScores.hauteur, self.boutonScores.x, self.boutonScores.y)
+        
+        self.boutons = [self.boutonJouer, self.boutonOptions, self.boutonQuitter, self.boutonAide, self.boutonScores]
+        self.textes = [self.texteJouer, self.texteOptions, self.texteQuitter, self.texteAide, self.texteScores]
+    
     def click(self, x, y):
-        if isinstance(jeu.page, Accueil):                                       # match case aurait été plus propre mais pas dispo en python 3.8
-            boutons = Accueil().boutonsAccueil
-            
-        elif isinstance(jeu.page, Niveaux):
-            boutons = Niveaux().boutonsNiveaux
-            
-        elif isinstance(jeu.page, Options):
-            boutons = Options().boutonsOptions
-            
-        elif isinstance(jeu.page, Aide):
-            boutons = Aide().boutonsAide
-            
-        elif isinstance(jeu.page, Scores):
-            boutons = Scores().boutonsScores
-            
-        else:
-            boutons = []
+        boutons = self.boutons
 
         for bouton in boutons:
             if bouton.isClicked(x, y):
-                print("clicked", bouton.nom)
                 page_classe = bouton.get_page()
-                print(page_classe)
+                
                 if page_classe is not None:
                     jeu.page = page_classe()
-                    print(jeu.page)
+
                 return True
         return False
-
-
-# ==================== Pages ====================
-class Accueil:
-
-    boutonJouer = Bouton("Niveaux", 200, 50, (125, 160, 202)).centrer(1280, 720)
-    texteJouer = Texte("Jouer", "white").centrer(boutonJouer.largeur, boutonJouer.hauteur, boutonJouer.x, boutonJouer.y)
-    boutonOptions = Bouton("Options", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 60)
-    texteOptions = Texte("Options", "white").centrer(boutonOptions.largeur, boutonOptions.hauteur, boutonOptions.x, boutonOptions.y)
-    boutonQuitter = Bouton("Quitter", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 120)
-    texteQuitter = Texte("Quitter", "white").centrer(boutonQuitter.largeur, boutonQuitter.hauteur, boutonQuitter.x, boutonQuitter.y)
-    boutonAide = Bouton("Aide", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 180)
-    texteAide = Texte("Aide", "white").centrer(boutonAide.largeur, boutonAide.hauteur, boutonAide.x, boutonAide.y)
-    boutonScores = Bouton("Scores", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 240)
-    texteScores = Texte("Scores", "white").centrer(boutonScores.largeur, boutonScores.hauteur, boutonScores.x, boutonScores.y)
-    
-    boutonsAccueil = [boutonJouer, boutonOptions, boutonQuitter, boutonAide, boutonScores]
-    textesAccueil = [texteJouer, texteOptions, texteQuitter, texteAide, texteScores]
     
     def draw(self, screen):
         pygame.draw.rect(screen, self.boutonJouer.couleur, self.boutonJouer.rendu, 0, 20)
@@ -172,19 +158,42 @@ class Accueil:
         screen.blit(self.texteScores.rendu, self.texteScores.coor)
 
 class Niveaux:
-    boutonNiveau1 = Bouton("Niveau1", 200, 50, (125, 160, 202)).centrer(640, 360)
-    texteNiveau1 = Texte("Niveau1", "white").centrer(boutonNiveau1.largeur, boutonNiveau1.hauteur, boutonNiveau1.x, boutonNiveau1.y)
-    boutonNiveau2 = Bouton("Niveau2", 200, 50, (125, 160, 202)).centrer(640, 360, 640, 0)
-    texteNiveau2 = Texte("Niveau2", "white").centrer(boutonNiveau2.largeur, boutonNiveau2.hauteur, boutonNiveau2.x, boutonNiveau2.y)
-    boutonNiveau3 = Bouton("Niveau3", 200, 50, (125, 160, 202)).centrer(640, 360, 0, 360)
-    texteNiveau3 = Texte("Niveau3", "white").centrer(boutonNiveau3.largeur, boutonNiveau3.hauteur, boutonNiveau3.x, boutonNiveau3.y)
-    boutonNiveauIA = Bouton("NiveauIA", 200, 50, (125, 160, 202)).centrer(640, 360, 640, 360)
-    texteNiveauIA = Texte("Niveau IA", "white").centrer(boutonNiveauIA.largeur, boutonNiveauIA.hauteur, boutonNiveauIA.x, boutonNiveauIA.y)
-    boutonAccueil = Bouton("Accueil", 200, 50, (125, 160, 202)).centrer(1280, 720)
-    texteAccueil = Texte("Accueil", "white").centrer(boutonAccueil.largeur, boutonAccueil.hauteur, boutonAccueil.x, boutonAccueil.y)
     
-    boutonsNiveaux = [boutonNiveau1, boutonNiveau2, boutonNiveau3, boutonNiveauIA, boutonAccueil]
-    textesNiveaux = [texteNiveau1, texteNiveau2, texteNiveau3, texteNiveauIA, texteAccueil]
+    def __init__(self):
+        self.boutonNiveau1 = Bouton("Niveau1", 200, 50, (125, 160, 202)).centrer(jeu.largeur // 2, jeu.hauteur // 2)
+        self.texteNiveau1 = Texte("Niveau 1", "white").centrer(self.boutonNiveau1.largeur, self.boutonNiveau1.hauteur, self.boutonNiveau1.x, self.boutonNiveau1.y)
+        self.boutonNiveau2 = Bouton("Niveau2", 200, 50, (125, 160, 202)).centrer(jeu.largeur // 2, jeu.hauteur // 2, jeu.largeur // 2, 0)
+        self.texteNiveau2 = Texte("Niveau 2", "white").centrer(self.boutonNiveau2.largeur, self.boutonNiveau2.hauteur, self.boutonNiveau2.x, self.boutonNiveau2.y)
+        self.boutonNiveau3 = Bouton("Niveau3", 200, 50, (125, 160, 202)).centrer(jeu.largeur // 2, jeu.hauteur // 2, 0, jeu.hauteur // 2)
+        self.texteNiveau3 = Texte("Niveau 3", "white").centrer(self.boutonNiveau3.largeur, self.boutonNiveau3.hauteur, self.boutonNiveau3.x, self.boutonNiveau3.y)
+        self.boutonNiveauIA = Bouton("NiveauIA", 200, 50, (125, 160, 202)).centrer(jeu.largeur // 2, jeu.hauteur // 2, jeu.largeur // 2, jeu.hauteur // 2)
+        self.texteNiveauIA = Texte("Niveau IA", "white").centrer(self.boutonNiveauIA.largeur, self.boutonNiveauIA.hauteur, self.boutonNiveauIA.x, self.boutonNiveauIA.y)
+        self.boutonAccueil = Bouton("Accueil", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur)
+        self.texteAccueil = Texte("Accueil", "white").centrer(self.boutonAccueil.largeur, self.boutonAccueil.hauteur, self.boutonAccueil.x, self.boutonAccueil.y)
+        
+        self.boutons = [self.boutonNiveau1, self.boutonNiveau2, self.boutonNiveau3, self.boutonNiveauIA, self.boutonAccueil]
+        self.textes = [self.texteNiveau1, self.texteNiveau2, self.texteNiveau3, self.texteNiveauIA, self.texteAccueil]
+    
+    def click(self, x, y):
+        boutons = self.boutons
+
+        for bouton in boutons:
+            if bouton.isClicked(x, y):
+                page_classe = bouton.get_page()
+                
+                if page_classe is not None and not isinstance(page_classe, int):
+                    jeu.page = page_classe()
+                    
+                elif page_classe == 1:
+                    jeu.page = Niveau(5, 0, 0.08)
+                
+                elif page_classe == 2:
+                    jeu.page = Niveau(6, 0.35, 0.08)
+                
+                elif page_classe == 3:
+                    jeu.page = Niveau(7, 0.75, 0.08)
+                return True
+        return False
     
     def draw(self, screen):
         pygame.draw.rect(screen, self.boutonNiveau1.couleur, self.boutonNiveau1.rendu, 0, 20)
@@ -211,7 +220,99 @@ class Aide:
 class Scores:
     pass
 
+class Brique:
+    """Cette classe permet de créer une brique"""
+    def __init__(self, x, y, hauteur, largeur, couleur, pourcentageBriquesModifie, pourcentageBonus):
+        self.x = x
+        self.y = y
+        self.largeur = largeur
+        self.hauteur = hauteur
+        self.rendu = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
+        if random.choices([True, False], weights = (pourcentageBriquesModifie, 1 - pourcentageBriquesModifie)) == [True]:
+            self.vie = 2
+        else:
+            self.vie = 1
+        
+        if self.vie == 2:
+            self.couleur = (0, 0, 0)
+        else:
+            self.couleur = couleur
+            
+        if random.choices([True, False], weights = (pourcentageBonus, 1 - pourcentageBonus)) == [True]:
+            self.bonus = True
+        else:
+            self.bonus = False
 
+class Plateforme:
+    """Cette classe permet de créer une plateforme"""
+    def __init__(self):
+        
+        self.largeur = int(jeu.largeur / 20) * 2.5
+        self.hauteur = int((jeu.hauteur // 100) * 25 / 10) // 2
+        self.x = jeu.largeur // 2 - self.largeur // 2
+        self.y = jeu.hauteur - jeu.hauteur // 50 * 7.5
+        self.rendu = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
+        self.couleur = (0, 0, 0)
+    
+    def actualisation(self):
+        self.rendu = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
+class Niveau:
+    
+    
+    def __init__(self, vitesseBalle, pourcentageBriquesModifie, pourcentageBonus):
+        
+        self.vitesseBalle = vitesseBalle
+        self.vitesseRaquette = 15
+        self.pourcentageBriquesModifie = pourcentageBriquesModifie
+        self.pourcentageBonus = pourcentageBonus
+        self.briques = self.generationBriques(jeu.largeur, jeu.hauteur)
+        self.plateforme = Plateforme()
+        
+        self.boutonAccueil = Bouton("Accueil", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur)
+        self.texteAccueil = Texte("Accueil", "white").centrer(self.boutonAccueil.largeur, self.boutonAccueil.hauteur, self.boutonAccueil.x, self.boutonAccueil.y)
+        
+        self.boutons = [self.boutonAccueil]
+        self.textes = [self.texteAccueil]
+
+    def click(self, x, y):
+        boutons = self.boutons
+
+        for bouton in boutons:
+            if bouton.isClicked(x, y):
+                page_classe = bouton.get_page()
+                
+                if page_classe is not None:
+                    jeu.page = page_classe()
+                return True
+        return False
+    
+    def __str__(self):
+        return f"Niveau({self.vitesseBalle}, {self.vitesseRaquette}, {self.pourcentageBriquesModifie}, {self.pourcentageBonus})"
+    
+    def generationBriques(self, largeurEcran, hauteurEcran):
+        briques = []
+        largeurBrique = int(largeurEcran / 20) # 20 correspond au nombre de briques par ligne
+
+        hauteurMur = (hauteurEcran // 100) * 25 # 20 correspond à la hauteur du mur
+        hauteurBrique = int(hauteurMur / 10) # 10 correspond au nombre de briques par colonne
+        
+        for x in range(0, largeurEcran, largeurBrique):
+            for y in range(30, hauteurMur, hauteurBrique):
+                briques.append(Brique(x, y, hauteurBrique, largeurBrique, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), self.pourcentageBriquesModifie, self.pourcentageBonus))
+        return briques
+    
+    def draw(self, screen):
+
+        pygame.draw.rect(screen, self.boutonAccueil.couleur, self.boutonAccueil.rendu, 0, 20)
+        screen.blit(self.texteAccueil.rendu, self.texteAccueil.coor)
+        
+        for brique in self.briques:
+            pygame.draw.rect(screen, brique.couleur, brique.rendu, 0, 7)
+        
+        
+        self.plateforme.actualisation()
+        pygame.draw.rect(screen, self.plateforme.couleur, self.plateforme.rendu, 0, 20)
+        
 
 # ==================== Jeu ====================
 
@@ -221,8 +322,8 @@ class Jeu:
 
         self.fps = 60
         self.FramePerSec = pygame.time.Clock()
-        self.largeur = 1280
-        self.hauteur = 720
+        self.largeur = 1920
+        self.hauteur = 1080
         self.screen = pygame.display.set_mode((self.largeur, self.hauteur))
         self.running = True
         self.font = pygame.font.SysFont("consolas", 20)
@@ -243,8 +344,16 @@ class Jeu:
             self.page.draw(self.screen)
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if Interactions().click(mouse_x, mouse_y):
-                        self.acceuil = False
+                    self.page.click(mouse_x, mouse_y)
+
+            if isinstance(self.page, Niveau):
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_LEFT]:
+                    self.page.plateforme.x -= self.page.vitesseRaquette
+                    
+                if keys[pygame.K_RIGHT]:
+                    self.page.plateforme.x += self.page.vitesseRaquette
+                        
             pygame.display.flip()
 
 jeu = Jeu()
