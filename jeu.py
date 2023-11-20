@@ -256,6 +256,23 @@ class Plateforme:
     
     def actualisation(self):
         self.rendu = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
+
+class Balle:
+    def __init__(self):
+        self.largeur = 15
+        self.hauteur = 15
+        self.diametre = self.largeur
+        self.x = jeu.largeur // 2 - random.randint(self.largeur // 2 -150, self.largeur // 2 + 150)
+        self.y = jeu.hauteur - random.randint(jeu.hauteur // 50 * 5, jeu.hauteur - jeu.hauteur // 50 * 7)
+        self.angle = random.randint(30, 150)
+        self.couleur = (0, 0, 0)
+    
+    def actualisation(self):
+        pass
+
+    def mouvements(self):
+        pass
+        
 class Niveau:
     
     
@@ -267,6 +284,7 @@ class Niveau:
         self.pourcentageBonus = pourcentageBonus
         self.briques = self.generationBriques(jeu.largeur, jeu.hauteur)
         self.plateforme = Plateforme()
+        self.balle = Balle()
         
         self.boutonAccueil = Bouton("Accueil", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur)
         self.texteAccueil = Texte("Accueil", "white").centrer(self.boutonAccueil.largeur, self.boutonAccueil.hauteur, self.boutonAccueil.x, self.boutonAccueil.y)
@@ -312,6 +330,7 @@ class Niveau:
         
         self.plateforme.actualisation()
         pygame.draw.rect(screen, self.plateforme.couleur, self.plateforme.rendu, 0, 20)
+        pygame.draw.circle(screen, self.balle.couleur, (self.balle.x, self.balle.y), self.balle.diametre)
         
 
 # ==================== Jeu ====================
