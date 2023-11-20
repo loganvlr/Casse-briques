@@ -114,15 +114,15 @@ class Bouton:
 class Accueil:
 
     def __init__(self):
-        self.boutonJouer = Bouton("Niveaux", 200, 50, (125, 160, 202)).centrer(1280, 720)
+        self.boutonJouer = Bouton("Niveaux", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur)
         self.texteJouer = Texte("Jouer", "white").centrer(self.boutonJouer.largeur, self.boutonJouer.hauteur, self.boutonJouer.x, self.boutonJouer.y)
-        self.boutonOptions = Bouton("Options", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 60)
+        self.boutonOptions = Bouton("Options", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 60)
         self.texteOptions = Texte("Options", "white").centrer(self.boutonOptions.largeur, self.boutonOptions.hauteur, self.boutonOptions.x, self.boutonOptions.y)
-        self.boutonQuitter = Bouton("Quitter", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 120)
+        self.boutonQuitter = Bouton("Quitter", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 120)
         self.texteQuitter = Texte("Quitter", "white").centrer(self.boutonQuitter.largeur, self.boutonQuitter.hauteur, self.boutonQuitter.x, self.boutonQuitter.y)
-        self.boutonAide = Bouton("Aide", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 180)
+        self.boutonAide = Bouton("Aide", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 180)
         self.texteAide = Texte("Aide", "white").centrer(self.boutonAide.largeur, self.boutonAide.hauteur, self.boutonAide.x, self.boutonAide.y)
-        self.boutonScores = Bouton("Scores", 200, 50, (125, 160, 202)).centrer(1280, 720, 0, 240)
+        self.boutonScores = Bouton("Scores", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 240)
         self.texteScores = Texte("Scores", "white").centrer(self.boutonScores.largeur, self.boutonScores.hauteur, self.boutonScores.x, self.boutonScores.y)
         
         self.boutons = [self.boutonJouer, self.boutonOptions, self.boutonQuitter, self.boutonAide, self.boutonScores]
@@ -322,14 +322,15 @@ class Jeu:
 
         self.fps = 60
         self.FramePerSec = pygame.time.Clock()
-        self.largeur = 1920
-        self.hauteur = 1080
+        self.largeur = 1680
+        self.hauteur = 1050
         self.screen = pygame.display.set_mode((self.largeur, self.hauteur))
         self.running = True
         self.font = pygame.font.SysFont("consolas", 20)
-        self.page = Accueil()
+        
 
     def run(self):
+        self.page = Accueil()
         while self.running:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             # ==================== Event detection ====================
@@ -348,10 +349,10 @@ class Jeu:
 
             if isinstance(self.page, Niveau):
                 keys = pygame.key.get_pressed()
-                if keys[pygame.K_LEFT]:
+                if keys[pygame.K_LEFT] and self.page.plateforme.x > 5:
                     self.page.plateforme.x -= self.page.vitesseRaquette
                     
-                if keys[pygame.K_RIGHT]:
+                if keys[pygame.K_RIGHT] and self.page.plateforme.x + self.page.plateforme.largeur < self.largeur - 5:
                     self.page.plateforme.x += self.page.vitesseRaquette
                         
             pygame.display.flip()
