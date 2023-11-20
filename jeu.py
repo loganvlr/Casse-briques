@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 pygame.init()
 
@@ -264,14 +265,16 @@ class Balle:
         self.diametre = self.largeur
         self.x = jeu.largeur // 2 - random.randint(self.largeur // 2 -150, self.largeur // 2 + 150)
         self.y = jeu.hauteur - random.randint(jeu.hauteur // 50 * 5, jeu.hauteur - jeu.hauteur // 50 * 7)
-        self.angle = random.randint(30, 150)
+        self.angle = random.uniform(math.pi * 0.5, math.pi * 1.5)
         self.couleur = (0, 0, 0)
+        self.vitesse = 20
     
-    def actualisation(self):
-        pass
+    def murTape(self):
+        self.angle = 360 - self.angle
 
     def mouvements(self):
-        pass
+        self.x += math.sin(self.angle) * self.vitesse * -1
+        self.y -= math.cos(self.angle) * self.vitesse * -1
         
 class Niveau:
     
@@ -329,6 +332,8 @@ class Niveau:
         
         
         self.plateforme.actualisation()
+        self.balle.mouvements()
+        
         pygame.draw.rect(screen, self.plateforme.couleur, self.plateforme.rendu, 0, 20)
         pygame.draw.circle(screen, self.balle.couleur, (self.balle.x, self.balle.y), self.balle.diametre)
         
@@ -373,7 +378,10 @@ class Jeu:
                     
                 if keys[pygame.K_RIGHT] and self.page.plateforme.x + self.page.plateforme.largeur < self.largeur - 5:
                     self.page.plateforme.x += self.page.vitesseRaquette
-                        
+                
+                for brique in self.page.briques:
+                    if brique.x >= self.page.balle.x + self.page.balle.largeur and brique.x + brique.largeur <= self.page.balle.x - self.page.balle.largeur and brique.y + brique.hauteur <= self.page.balle.y - self.page.balle.hauteur and brique.y >= self.page.balle.y + self.page.balle.hauteur:
+                        self.page.balle.murTape()
             pygame.display.flip()
 
 jeu = Jeu()
