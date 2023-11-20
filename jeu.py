@@ -254,24 +254,40 @@ class Plateforme:
         self.y = jeu.hauteur - jeu.hauteur // 50 * 7.5
         self.rendu = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
         self.couleur = (0, 0, 0)
-    
+        self.bougeVersGauche = False
+        self.bougeVersDroite = False
+
     def actualisation(self):
         self.rendu = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
 
 class Balle:
     def __init__(self):
-        self.largeur = 15
-        self.hauteur = 15
-        self.diametre = self.largeur
-        self.x = jeu.largeur // 2 - random.randint(self.largeur // 2 -150, self.largeur // 2 + 150)
+        self.largeur = jeu.largeur / 128
+        self.hauteur = self.largeur
+        self.rayon = self.largeur // 2
+        self.x = jeu.largeur // 2 - random.randint(-150, 150)
         self.y = jeu.hauteur - random.randint(jeu.hauteur // 50 * 5, jeu.hauteur - jeu.hauteur // 50 * 7)
-        self.angle = random.uniform(math.pi * 0.5, math.pi * 1.5)
+        self.angle = random.uniform(math.pi * 0.75, math.pi * 1.25)
         self.couleur = (0, 0, 0)
-        self.vitesse = 20
+        self.vitesse = jeu.hauteur / 72
     
-    def murTape(self):
-        self.angle = 360 - self.angle
+    def rebond(self, axe):
+        if axe == "horizontal":
+            self.angle = -self.angle
+        elif axe == "vertical":
+            self.angle = math.pi - self.angle
 
+    def rebondPlateforme(self, plateforme):
+        print("plateforme")
+        if plateforme.bougeVersGauche:
+            self.angle = (math.pi - self.angle) - math.pi / 10
+            
+        elif plateforme.bougeVersDroite:
+            self.angle = (math.pi - self.angle) + math.pi / 10
+            
+        else:
+            self.angle = math.pi - self.angle
+    
     def mouvements(self):
         self.x += math.sin(self.angle) * self.vitesse * -1
         self.y -= math.cos(self.angle) * self.vitesse * -1
@@ -282,7 +298,7 @@ class Niveau:
     def __init__(self, vitesseBalle, pourcentageBriquesModifie, pourcentageBonus):
         
         self.vitesseBalle = vitesseBalle
-        self.vitesseRaquette = 15
+        self.vitesseRaquette = jeu.hauteur / 72
         self.pourcentageBriquesModifie = pourcentageBriquesModifie
         self.pourcentageBonus = pourcentageBonus
         self.briques = self.generationBriques(jeu.largeur, jeu.hauteur)
@@ -314,13 +330,45 @@ class Niveau:
         briques = []
         largeurBrique = int(largeurEcran / 20) # 20 correspond au nombre de briques par ligne
 
-        hauteurMur = (hauteurEcran // 100) * 25 # 20 correspond à la hauteur du mur
-        hauteurBrique = int(hauteurMur / 10) # 10 correspond au nombre de briques par colonne
+        hauteurMur = (hauteurEcran // 100) * 30 # 30 correspond à la hauteur du mur
+        hauteurBrique = int(hauteurMur / 7) # 10 correspond au nombre de briques par colonne
         
         for x in range(0, largeurEcran, largeurBrique):
             for y in range(30, hauteurMur, hauteurBrique):
                 briques.append(Brique(x, y, hauteurBrique, largeurBrique, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), self.pourcentageBriquesModifie, self.pourcentageBonus))
         return briques
+    
+    def collision(self, balle, plateforme, briques):
+        self.collisionPlateforme(balle, plateforme)        
+        self.collisionMur(balle)
+        self.collisionBrique(balle)
+    
+    def collisionPlateforme(self, balle, plateforme):
+        if balle.x + balle.rayon >= plateforme.x and balle.x + balle.rayon <= plateforme.x + plateforme.largeur and balle.y + balle.rayon >= plateforme.y and balle.y + balle.rayon <= plateforme.y + plateforme.hauteur:
+            balle.rebondPlateforme(plateforme)
+    
+    def collisionMur(self, balle):
+        if balle.x <= 0 or balle.x + balle.rayon >= jeu.largeur:  # Si la balle a frappé un mur à gauche ou à droite
+            balle.rebond("horizontal")
+        if balle.y <= 0 or balle.y + balle.rayon >= jeu.hauteur:  # Si la balle a frappé un mur en haut ou en bas
+            balle.rebond("vertical")
+    
+    def collisionBrique(self, balle):
+        for brique in self.briques:
+            if balle.x <= brique.x + brique.largeur and balle.x + balle.rayon >= brique.x and balle.y <= brique.y + brique.hauteur and balle.y + balle.rayon >= brique.y:
+                balle.rebond("vertical")
+                if brique.vie == 1:
+                    self.briques.remove(brique)
+                else:
+                    brique.vie -= 1
+            
+            elif balle.y <= brique.y + brique.hauteur and balle.y + balle.rayon >= brique.y and balle.x <= brique.x + brique.largeur and balle.x + balle.rayon >= brique.x:
+                balle.rebond("horizontal")
+                self.briques.remove(brique)
+                if brique.vie == 1:
+                    self.briques.remove(brique)
+                else:
+                    brique.vie -= 1
     
     def draw(self, screen):
 
@@ -330,12 +378,12 @@ class Niveau:
         for brique in self.briques:
             pygame.draw.rect(screen, brique.couleur, brique.rendu, 0, 7)
         
-        
         self.plateforme.actualisation()
         self.balle.mouvements()
+        self.collision(self.balle, self.plateforme, self.briques)
         
         pygame.draw.rect(screen, self.plateforme.couleur, self.plateforme.rendu, 0, 20)
-        pygame.draw.circle(screen, self.balle.couleur, (self.balle.x, self.balle.y), self.balle.diametre)
+        pygame.draw.circle(screen, self.balle.couleur, (self.balle.x, self.balle.y), self.balle.rayon * 2)
         
 
 # ==================== Jeu ====================
@@ -346,8 +394,8 @@ class Jeu:
 
         self.fps = 60
         self.FramePerSec = pygame.time.Clock()
-        self.largeur = 1680
-        self.hauteur = 1050
+        self.largeur = 1280
+        self.hauteur = 720
         self.screen = pygame.display.set_mode((self.largeur, self.hauteur))
         self.running = True
         self.font = pygame.font.SysFont("consolas", 20)
@@ -365,7 +413,7 @@ class Jeu:
                     
             # ==================== Update ====================
             self.screen.fill("white")
-            self.FramePerSec.tick(60) # 60 FPS limit
+            self.FramePerSec.tick(self.fps) # 60 FPS limit
             self.page.draw(self.screen)
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -375,13 +423,19 @@ class Jeu:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_LEFT] and self.page.plateforme.x > 5:
                     self.page.plateforme.x -= self.page.vitesseRaquette
+                if keys[pygame.K_LEFT]:
+                    self.page.plateforme.bougeVersGauche = True
+                else:
+                    self.page.plateforme.bougeVersGauche = False
                     
                 if keys[pygame.K_RIGHT] and self.page.plateforme.x + self.page.plateforme.largeur < self.largeur - 5:
                     self.page.plateforme.x += self.page.vitesseRaquette
-                
-                for brique in self.page.briques:
-                    if brique.x >= self.page.balle.x + self.page.balle.largeur and brique.x + brique.largeur <= self.page.balle.x - self.page.balle.largeur and brique.y + brique.hauteur <= self.page.balle.y - self.page.balle.hauteur and brique.y >= self.page.balle.y + self.page.balle.hauteur:
-                        self.page.balle.murTape()
+                    
+                if keys[pygame.K_RIGHT]:
+                    self.page.plateforme.bougeVersDroite = True
+                else:
+                    self.page.plateforme.bougeVersDroite = False
+                    
             pygame.display.flip()
 
 jeu = Jeu()
