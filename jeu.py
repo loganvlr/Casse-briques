@@ -228,6 +228,7 @@ class Brique:
         self.y = y
         self.largeur = largeur
         self.hauteur = hauteur
+        print(self.hauteur)
         self.rendu = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
         if random.choices([True, False], weights = (pourcentageBriquesModifie, 1 - pourcentageBriquesModifie)) == [True]:
             self.vie = 2
@@ -263,6 +264,8 @@ class Plateforme:
 class Balle:
     def __init__(self):
         self.largeur = jeu.largeur / 128
+        print(self.largeur)
+        print(self.largeur // 2)
         self.hauteur = self.largeur
         self.rayon = self.largeur // 2
         self.x = jeu.largeur // 2 - random.randint(-150, 150)
@@ -273,6 +276,8 @@ class Balle:
     
     def rebond(self, axe):
         if axe == "horizontal":
+            if self.angle == 180:
+                self.angle = - self.angle + math.pi
             self.angle = -self.angle
         elif axe == "vertical":
             self.angle = math.pi - self.angle
@@ -344,31 +349,74 @@ class Niveau:
         self.collisionBrique(balle)
     
     def collisionPlateforme(self, balle, plateforme):
-        if balle.x + balle.rayon >= plateforme.x and balle.x + balle.rayon <= plateforme.x + plateforme.largeur and balle.y + balle.rayon >= plateforme.y and balle.y + balle.rayon <= plateforme.y + plateforme.hauteur:
+        # Crée des rectangles pour la balle et la plateforme
+        rect_balle = pygame.Rect(balle.x, balle.y, balle.rayon * 2, balle.rayon * 2)
+        rect_plateforme = pygame.Rect(plateforme.x, plateforme.y, plateforme.largeur, plateforme.hauteur)
+
+        # Vérifie si les rectangles se chevauchent
+        if rect_balle.colliderect(rect_plateforme):
+            # Gère le rebond et déplace la balle à l'extérieur de la plateforme
             balle.rebondPlateforme(plateforme)
+            balle.y = rect_plateforme.top - balle.rayon * 2
     
     def collisionMur(self, balle):
         if balle.x <= 0 or balle.x + balle.rayon >= jeu.largeur:  # Si la balle a frappé un mur à gauche ou à droite
             balle.rebond("horizontal")
+
+
         if balle.y <= 0 or balle.y + balle.rayon >= jeu.hauteur:  # Si la balle a frappé un mur en haut ou en bas
             balle.rebond("vertical")
     
     def collisionBrique(self, balle):
         for brique in self.briques:
-            if balle.x <= brique.x + brique.largeur and balle.x + balle.rayon >= brique.x and balle.y <= brique.y + brique.hauteur and balle.y + balle.rayon >= brique.y:
-                balle.rebond("vertical")
+            # Crée des rectangles pour la balle et la brique
+            rect_balle = pygame.Rect(balle.x, balle.y, balle.rayon * 2, balle.rayon * 2)
+            rect_brique = pygame.Rect(brique.x, brique.y, brique.largeur, brique.hauteur)
+
+            # Vérifie si les rectangles se chevauchent
+            if rect_balle.colliderect(rect_brique):
+                # Calcule les distances entre les côtés de la balle et de la brique
+                distances = {
+                    "gauche": abs(rect_balle.right - rect_brique.left),
+                    "droite": abs(rect_balle.left - rect_brique.right),
+                    "haut": abs(rect_balle.bottom - rect_brique.top),
+                    "bas": abs(rect_balle.top - rect_brique.bottom)
+                }
+
+                # Détermine le côté de collision en fonction de la distance minimale
+                cote_collision = min(distances, key=distances.get)
+
+                # Gère le rebond et déplace la balle à l'extérieur de la brique
+                if cote_collision in ["gauche", "droite"]:
+                    balle.rebond("horizontal")
+                    print("horizontal")
+                    if cote_collision == "gauche":
+                        print("gauche")
+                        balle.x = rect_brique.left - balle.rayon * 2
+                    else:
+                        print("droite")
+                        balle.x = rect_brique.right
+                else:
+                    balle.rebond("vertical")
+                    print("vertical")
+                    if cote_collision == "haut":
+                        print("haut")
+                        balle.y = rect_brique.top - balle.rayon * 2
+                    else:
+                        print("bas")
+                        balle.y = rect_brique.bottom
+
+                # Gère les vies de la brique
                 if brique.vie == 1:
                     self.briques.remove(brique)
                 else:
                     brique.vie -= 1
+
+                # Arrête de vérifier les autres briques
+                break
+
+                
             
-            elif balle.y <= brique.y + brique.hauteur and balle.y + balle.rayon >= brique.y and balle.x <= brique.x + brique.largeur and balle.x + balle.rayon >= brique.x:
-                balle.rebond("horizontal")
-                self.briques.remove(brique)
-                if brique.vie == 1:
-                    self.briques.remove(brique)
-                else:
-                    brique.vie -= 1
     
     def draw(self, screen):
 
@@ -376,7 +424,7 @@ class Niveau:
         screen.blit(self.texteAccueil.rendu, self.texteAccueil.coor)
         
         for brique in self.briques:
-            pygame.draw.rect(screen, brique.couleur, brique.rendu, 0, 7)
+            pygame.draw.rect(screen, brique.couleur, brique.rendu, 0)
         
         self.plateforme.actualisation()
         self.balle.mouvements()
