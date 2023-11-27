@@ -228,7 +228,6 @@ class Brique:
         self.y = y
         self.largeur = largeur
         self.hauteur = hauteur
-        print(self.hauteur)
         self.rendu = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
         if random.choices([True, False], weights = (pourcentageBriquesModifie, 1 - pourcentageBriquesModifie)) == [True]:
             self.vie = 2
@@ -264,8 +263,6 @@ class Plateforme:
 class Balle:
     def __init__(self):
         self.largeur = jeu.largeur / 128
-        print(self.largeur)
-        print(self.largeur // 2)
         self.hauteur = self.largeur
         self.rayon = self.largeur // 2
         self.x = jeu.largeur // 2 - random.randint(-150, 150)
@@ -309,12 +306,13 @@ class Niveau:
         self.briques = self.generationBriques(jeu.largeur, jeu.hauteur)
         self.plateforme = Plateforme()
         self.balle = Balle()
-        
+        self.score = 0
         self.boutonAccueil = Bouton("Accueil", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur)
         self.texteAccueil = Texte("Accueil", "white").centrer(self.boutonAccueil.largeur, self.boutonAccueil.hauteur, self.boutonAccueil.x, self.boutonAccueil.y)
+        self.texteScore = Texte(f"Score : {self.score}", "black").centrer(largeurConteneur = jeu.largeur)
         
         self.boutons = [self.boutonAccueil]
-        self.textes = [self.texteAccueil]
+        self.textes = [self.texteAccueil, self.texteScore]
 
     def click(self, x, y):
         boutons = self.boutons
@@ -409,8 +407,11 @@ class Niveau:
                 # Gère les vies de la brique
                 if brique.vie == 1:
                     self.briques.remove(brique)
+                    self.score = self.score + 10
                 else:
                     brique.vie -= 1
+                
+                
 
                 # Arrête de vérifier les autres briques
                 break
@@ -422,6 +423,10 @@ class Niveau:
 
         pygame.draw.rect(screen, self.boutonAccueil.couleur, self.boutonAccueil.rendu, 0, 20)
         screen.blit(self.texteAccueil.rendu, self.texteAccueil.coor)
+        
+        self.texteScore.texte = f"Score : {self.score}"
+        self.texteScore.rendu = self.texteScore.font.render(self.texteScore.texte, True, self.texteScore.couleur)
+        screen.blit(self.texteScore.rendu, self.texteScore.coor)
         
         for brique in self.briques:
             pygame.draw.rect(screen, brique.couleur, brique.rendu, 0)
