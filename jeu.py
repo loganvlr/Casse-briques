@@ -24,16 +24,40 @@ class Texte:
         return f"Texte({self.texte}, {self.couleur}, {self.x}, {self.y}, {self.coor})"
     
     def centrerLargeur(self, largeurConteneur, xConteneur = 0):
+        """Cette méthode permet de centrer un texte en largeur par rapport à un conteneur. Le conteneur peu être n'importe où dans la fenêtre.
+        Args:
+            largeurConteneur(int): largeur du conteneur dans lequel on veut centrer le contenu.
+            xConteneur(int or float): position x du conteneur si celui-ci est décalé par rapport au bord de la fenêtre.
+        Return:
+            (float): position x du texte qui permettra de centrer celui-ci dans le conteneur.
+        """
+        
         self.x = (largeurConteneur / 2 - self.font.size(self.texte)[0] / 2) + xConteneur
         return self.x
 
 
     def centrerHauteur(self, hauteurConteneur, yConteneur = 0):
+        """Cette méthode permet de centrer un texte en hauteur par rapport à un conteneur. Le conteneur peu être n'importe où dans la fenêtre.
+        Args:
+            largeurConteneur(int): hauteur du conteneur dans lequel on veut centrer le contenu.
+            xConteneur(int or float): position y du conteneur si celui-ci est décalé par rapport au bord de la fenêtre.
+        Return:
+            (float): position y du texte qui permettra de centrer celui-ci dans le conteneur.
+        """
         self.y = (hauteurConteneur / 2 - self.font.size(self.texte)[1] / 2) + yConteneur
         return self.y
 
     
     def centrer(self, largeurConteneur = 0, hauteurConteneur = 0, xConteneur = 0, yConteneur = 0):
+        """Cette méthode permet de centrer un texte en largeur ou en hauteur ou les deux à la fois par rapport à un conteneur. Le conteneur peu être n'importe où dans la fenêtre.
+        Args:
+            largeurConteneur(int or float): largeur du conteneur dans lequel on veut centrer le contenu.
+            hauteurConteneur(int or float): largeur du conteneur dans lequel on veut centrer le contenu.
+            xConteneur(int or float):  position x du conteneur si celui-ci est décalé par rapport au bord de la fenêtre.
+            yConteneur(int or float):  position y du conteneur si celui-ci est décalé par rapport au bord de la fenêtre.
+        Return:
+            (Texte): on retourne le texte
+        """
         if largeurConteneur > 0:
             self.x = self.centrerLargeur(largeurConteneur, xConteneur)
         
@@ -65,16 +89,39 @@ class Bouton:
         return f"Bouton({self.largeur}, {self.hauteur}, {self.couleur}, {self.x}, {self.y}, {self.coor})"
     
     def centrerLargeur(self, largeurConteneur, xConteneur = 0):
+        """Cette méthode permet de centrer un bouton en largeur par rapport à un conteneur. Le conteneur peu être n'importe où dans la fenêtre.
+        Args:
+            largeurConteneur(int): largeur du conteneur dans lequel on veut centrer le contenu.
+            xConteneur(int or float): position x du conteneur si celui-ci est décalé par rapport au bord de la fenêtre.
+        Return:
+            (float): position x du bouton qui permettra de centrer celui-ci dans le conteneur.
+        """
         self.x = (largeurConteneur / 2 - self.largeur / 2) + xConteneur
         return self.x
 
 
     def centrerHauteur(self, hauteurConteneur, yConteneur = 0):
+        """Cette méthode permet de centrer un bouton en hauteur par rapport à un conteneur. Le conteneur peu être n'importe où dans la fenêtre.
+        Args:
+            largeurConteneur(int): hauteur du conteneur dans lequel on veut centrer le contenu.
+            xConteneur(int or float): position y du conteneur si celui-ci est décalé par rapport au bord de la fenêtre.
+        Return:
+            (float): position y du bouton qui permettra de centrer celui-ci dans le conteneur.
+        """
         self.y = (hauteurConteneur / 2 - self.hauteur / 2) + yConteneur
         return self.y
 
     
     def centrer(self, largeurConteneur = 0, hauteurConteneur = 0, xConteneur = 0, yConteneur = 0):
+        """Cette méthode permet de centrer un bouton en largeur ou en hauteur ou les deux à la fois par rapport à un conteneur. Le conteneur peu être n'importe où dans la fenêtre.
+        Args:
+            largeurConteneur(int or float): largeur du conteneur dans lequel on veut centrer le contenu.
+            hauteurConteneur(int or float): largeur du conteneur dans lequel on veut centrer le contenu.
+            xConteneur(int or float):  position x du conteneur si celui-ci est décalé par rapport au bord de la fenêtre.
+            yConteneur(int or float):  position y du conteneur si celui-ci est décalé par rapport au bord de la fenêtre.
+        Return:
+            (Bouton): on retourne le bouton
+        """
         if largeurConteneur > 0:
             self.x = self.centrerLargeur(largeurConteneur, xConteneur)
         
@@ -85,14 +132,24 @@ class Bouton:
         return self
         
     def isClicked(self, x, y):
+        """Cette méthode permet de savoir si un bouton est cliqué.
+        Args:
+            x(int or float):  position x du bouton
+            y(int or float):  position y du bouton
+        Return:
+            (bool): True si bouton est cliqué, False sinon.
+        """
         if x > self.x and x < self.x + self.largeur and y > self.y and y < self.y + self.hauteur:
-
             return True
         else:
             return False
 
     
     def get_page(self):
+        """Cette méthode permet d'obtenir, à l'aide du nom de la classe du bouton en chaîne de caractères, la classe que représente le bouton. Ex : nom de la classe du bouton = "Aide" la classe que représente le bouton est Aide.
+        Return:
+            (class or int): retourne la classe de la page. Si la page est un niveau de jeu, on retourne le numéro de niveau du jeu.
+        """
         # Retourne la classe correspondante en fonction du nom du bouton
         mapping = {
             "Accueil": Accueil,
@@ -104,6 +161,7 @@ class Bouton:
             "Niveau2": 2,
             "Niveau3": 3,
         }
+        # Si le nom du bouton est Quitter, on sort du jeu.
         if self.nom == "Quitter":
             exit(0)
         return mapping[self.nom]
@@ -119,17 +177,24 @@ class Accueil:
         self.texteJouer = Texte("Jouer", "white").centrer(self.boutonJouer.largeur, self.boutonJouer.hauteur, self.boutonJouer.x, self.boutonJouer.y)
         self.boutonOptions = Bouton("Options", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 60)
         self.texteOptions = Texte("Options", "white").centrer(self.boutonOptions.largeur, self.boutonOptions.hauteur, self.boutonOptions.x, self.boutonOptions.y)
-        self.boutonQuitter = Bouton("Quitter", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 120)
-        self.texteQuitter = Texte("Quitter", "white").centrer(self.boutonQuitter.largeur, self.boutonQuitter.hauteur, self.boutonQuitter.x, self.boutonQuitter.y)
-        self.boutonAide = Bouton("Aide", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 180)
+        self.boutonAide = Bouton("Aide", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 120)
         self.texteAide = Texte("Aide", "white").centrer(self.boutonAide.largeur, self.boutonAide.hauteur, self.boutonAide.x, self.boutonAide.y)
-        self.boutonScores = Bouton("Scores", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 240)
+        self.boutonScores = Bouton("Scores", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 180)
         self.texteScores = Texte("Scores", "white").centrer(self.boutonScores.largeur, self.boutonScores.hauteur, self.boutonScores.x, self.boutonScores.y)
+        self.boutonQuitter = Bouton("Quitter", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 240)
+        self.texteQuitter = Texte("Quitter", "white").centrer(self.boutonQuitter.largeur, self.boutonQuitter.hauteur, self.boutonQuitter.x, self.boutonQuitter.y)
         
         self.boutons = [self.boutonJouer, self.boutonOptions, self.boutonQuitter, self.boutonAide, self.boutonScores]
         self.textes = [self.texteJouer, self.texteOptions, self.texteQuitter, self.texteAide, self.texteScores]
     
     def click(self, x, y):
+        """Cette méthode changer de page/fenêtre si un bouton est cliqué. Quand un bouton est cliqué, on obtient la classe que représente le bouton pour ensuite définir la page sur la classe de la nouvelle page (pour rappel, chaque page a sa propre classe).
+        Args:
+            x(int or float):  position x du curseur de la souris.
+            y(int or float):  position y du curseur de la souris.
+        Return:
+            (bool): True si la page est changé, False sinon.
+        """
         boutons = self.boutons
 
         for bouton in boutons:
@@ -143,20 +208,21 @@ class Accueil:
         return False
     
     def draw(self, screen):
+        """Cette méthode permet d'afficher dans la fenêtre les différents éléments de la page."""
         pygame.draw.rect(screen, self.boutonJouer.couleur, self.boutonJouer.rendu, 0, 20)
         screen.blit(self.texteJouer.rendu, self.texteJouer.coor)
 
         pygame.draw.rect(screen, self.boutonOptions.couleur, self.boutonOptions.rendu, 0, 20)
         screen.blit(self.texteOptions.rendu, self.texteOptions.coor)
         
-        pygame.draw.rect(screen, self.boutonQuitter.couleur, self.boutonQuitter.rendu, 0, 20)
-        screen.blit(self.texteQuitter.rendu, self.texteQuitter.coor)
-        
         pygame.draw.rect(screen, self.boutonAide.couleur, self.boutonAide.rendu, 0, 20)
         screen.blit(self.texteAide.rendu, self.texteAide.coor)
         
         pygame.draw.rect(screen, self.boutonScores.couleur, self.boutonScores.rendu, 0, 20)
         screen.blit(self.texteScores.rendu, self.texteScores.coor)
+        
+        pygame.draw.rect(screen, self.boutonQuitter.couleur, self.boutonQuitter.rendu, 0, 20)
+        screen.blit(self.texteQuitter.rendu, self.texteQuitter.coor)
 
 class Niveaux:
     
@@ -176,6 +242,13 @@ class Niveaux:
         self.textes = [self.texteNiveau1, self.texteNiveau2, self.texteNiveau3, self.texteNiveauIA, self.texteAccueil]
     
     def click(self, x, y):
+        """Cette méthode changer de page/fenêtre si un bouton est cliqué. Quand un bouton est cliqué, on obtient la classe que représente le bouton pour ensuite définir la page sur la classe de la nouvelle page (pour rappel, chaque page a sa propre classe).
+        Args:
+            x(int or float):  position x du curseur de la souris.
+            y(int or float):  position y du curseur de la souris.
+        Return:
+            (bool): True si la page est changé, False sinon.
+        """
         boutons = self.boutons
 
         for bouton in boutons:
@@ -197,6 +270,7 @@ class Niveaux:
         return False
     
     def draw(self, screen):
+        """Cette méthode permet d'afficher dans la fenêtre les différents éléments de la page."""
         pygame.draw.rect(screen, self.boutonNiveau1.couleur, self.boutonNiveau1.rendu, 0, 20)
         screen.blit(self.texteNiveau1.rendu, self.texteNiveau1.coor)
         
@@ -258,6 +332,7 @@ class Plateforme:
         self.bougeVersDroite = False
 
     def actualisation(self):
+        """Cette méthode permet de rafraichir la plateforme, c'est à dire que si le joueur décide de la déplacer, elle est immédiatement actualisée pour l'afficher à sa bonne place."""
         self.rendu = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
 
 class Balle:
@@ -272,6 +347,10 @@ class Balle:
         self.vitesse = jeu.hauteur / 72
     
     def rebond(self, axe):
+        """Cette méthode permet de gérer les rebonds et de changer l'angle de la balle en fonction de sur quel axe la balle a rebondi.
+        Args:
+            axe(str): axe qui peut être soit horizontal soit verticale. La gestion des angles n'est pas la même entre ces deux cas.
+        """
         if axe == "horizontal":
             if self.angle == 180:
                 self.angle = - self.angle + math.pi
@@ -280,7 +359,10 @@ class Balle:
             self.angle = math.pi - self.angle
 
     def rebondPlateforme(self, plateforme):
-        print("plateforme")
+        """Cette méthode permet de gérer les rebonds de la balle sur la plateforme. Les mouvements de la plateforme est un facteur qui va faire varier l'angle de la balle. Ex : si la plateforme va vers la gauche et que la balle fait un rebond sur la plateforme, l'angle sera modifié de sorte que la balle aille plus vite à gauche.
+        Args:
+            plateforme(Plateforme): plateforme du joueur.
+        """
         if plateforme.bougeVersGauche:
             self.angle = (math.pi - self.angle) - math.pi / 10
             
@@ -291,6 +373,7 @@ class Balle:
             self.angle = math.pi - self.angle
     
     def mouvements(self):
+        """Cette méthode permet de gérer les mouvemetns de la balle, selon son angle et sa vitesse."""
         self.x += math.sin(self.angle) * self.vitesse * -1
         self.y -= math.cos(self.angle) * self.vitesse * -1
         
@@ -315,6 +398,13 @@ class Niveau:
         self.textes = [self.texteAccueil, self.texteScore]
 
     def click(self, x, y):
+        """Cette méthode changer de page/fenêtre si un bouton est cliqué. Quand un bouton est cliqué, on obtient la classe que représente le bouton pour ensuite définir la page sur la classe de la nouvelle page (pour rappel, chaque page a sa propre classe).
+        Args:
+            x(int or float):  position x du curseur de la souris.
+            y(int or float):  position y du curseur de la souris.
+        Return:
+            (bool): True si la page est changé, False sinon.
+        """
         boutons = self.boutons
 
         for bouton in boutons:
@@ -330,23 +420,43 @@ class Niveau:
         return f"Niveau({self.vitesseBalle}, {self.vitesseRaquette}, {self.pourcentageBriquesModifie}, {self.pourcentageBonus})"
     
     def generationBriques(self, largeurEcran, hauteurEcran):
+        """Cette méthode permet de générer les briques d'un niveau. Plus le niveau du jeu est élevé, plus le nombre de briques modifiée (qui ont une résistance augmentée) sera élevé.
+        Args:
+            largeurEcran(int): entier représentant la largeur de la fenêtre (en pixel) qui permettra de déterminer la largeur de chaque brique.
+            hauteurEcran(int): entier représentant la hauteur de la fenêtre (en pixel) qui permettra de déterminer la hauteur de chaque brique.
+        Return:
+            (list): liste comprenant toutes les briques.
+        """
         briques = []
         largeurBrique = int(largeurEcran / 20) # 20 correspond au nombre de briques par ligne
-
-        hauteurMur = (hauteurEcran // 100) * 30 # 30 correspond à la hauteur du mur
+        
+        ecartHauteurBrique = hauteurEcran / 384
+        ecartLargeurBrique = ecartHauteurBrique * (16/9)
+        hauteurMur = (hauteurEcran // 100) * 30 # 30 correspond 30% de la hauteur de la fenêtre qui correspond à la hauteur du mur de briques.
         hauteurBrique = int(hauteurMur / 7) # 10 correspond au nombre de briques par colonne
         
         for x in range(0, largeurEcran, largeurBrique):
             for y in range(30, hauteurMur, hauteurBrique):
-                briques.append(Brique(x, y, hauteurBrique, largeurBrique, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), self.pourcentageBriquesModifie, self.pourcentageBonus))
+                briques.append(Brique(x + ecartLargeurBrique, y + ecartLargeurBrique, hauteurBrique - ecartLargeurBrique, largeurBrique - ecartLargeurBrique, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), self.pourcentageBriquesModifie, self.pourcentageBonus))
         return briques
     
     def collision(self, balle, plateforme, briques):
+        """Cette méthode permet de détecter n'importe quelle collision de la balle avec des éléments tels que les bords de la fenêtre, la plateforme, ou encore les briques.
+        Args:
+            balle(Balle): balle du jeu.
+            plateforme(Plateforme): plateforme du joueur.
+            briques(list): liste comprenant toutes les briques.
+        """
         self.collisionPlateforme(balle, plateforme)        
         self.collisionMur(balle)
         self.collisionBrique(balle)
     
     def collisionPlateforme(self, balle, plateforme):
+        """Cette méthode permet de détecter les collisions balle-plateforme.
+        Args:
+            balle(Balle): balle du jeu.
+            plateforme(Plateforme): plateforme du joueur.
+        """
         # Crée des rectangles pour la balle et la plateforme
         rect_balle = pygame.Rect(balle.x, balle.y, balle.rayon * 2, balle.rayon * 2)
         rect_plateforme = pygame.Rect(plateforme.x, plateforme.y, plateforme.largeur, plateforme.hauteur)
@@ -358,14 +468,21 @@ class Niveau:
             balle.y = rect_plateforme.top - balle.rayon * 2
     
     def collisionMur(self, balle):
+        """Cette méthode permet de détecter les collisions balle-mur.
+        Args:
+            balle(Balle): balle du jeu.
+        """
         if balle.x <= 0 or balle.x + balle.rayon >= jeu.largeur:  # Si la balle a frappé un mur à gauche ou à droite
             balle.rebond("horizontal")
-
 
         if balle.y <= 0 or balle.y + balle.rayon >= jeu.hauteur:  # Si la balle a frappé un mur en haut ou en bas
             balle.rebond("vertical")
     
     def collisionBrique(self, balle):
+        """Cette méthode permet de détecter les collisions balle-brique.
+        Args:
+            balle(Balle): balle du jeu.
+        """
         for brique in self.briques:
             # Crée des rectangles pour la balle et la brique
             rect_balle = pygame.Rect(balle.x, balle.y, balle.rayon * 2, balle.rayon * 2)
@@ -411,16 +528,12 @@ class Niveau:
                 else:
                     brique.vie -= 1
                 
-                
-
                 # Arrête de vérifier les autres briques
                 break
 
-                
-            
     
     def draw(self, screen):
-
+        """Cette méthode permet d'afficher dans la fenêtre les différents éléments de la page."""
         pygame.draw.rect(screen, self.boutonAccueil.couleur, self.boutonAccueil.rendu, 0, 20)
         screen.blit(self.texteAccueil.rendu, self.texteAccueil.coor)
         
@@ -445,10 +558,10 @@ class Jeu:
     def __init__(self):
         pygame.init()
 
-        self.fps = 60
+        self.fps = 75
         self.FramePerSec = pygame.time.Clock()
-        self.largeur = 1280
-        self.hauteur = 720
+        self.largeur = 1080
+        self.hauteur = 1920
         self.screen = pygame.display.set_mode((self.largeur, self.hauteur))
         self.running = True
         self.font = pygame.font.SysFont("consolas", 20)
