@@ -428,16 +428,19 @@ class Niveau:
             (list): liste comprenant toutes les briques.
         """
         briques = []
-        largeurBrique = int(largeurEcran / 20) # 20 correspond au nombre de briques par ligne
         
-        ecartHauteurBrique = hauteurEcran / 384
-        ecartLargeurBrique = ecartHauteurBrique * (16/9)
+        # On va calculer les écart entre les briques pour créer un mur "beau"
+        ecartHauteurBrique = hauteurEcran // 384
+        ecartLargeurBrique = largeurEcran // 384
+        
+        largeurBrique = largeurEcran // 20 # 20 correspond au nombre de briques par ligne
         hauteurMur = (hauteurEcran // 100) * 30 # 30 correspond 30% de la hauteur de la fenêtre qui correspond à la hauteur du mur de briques.
-        hauteurBrique = int(hauteurMur / 7) # 10 correspond au nombre de briques par colonne
+        hauteurBrique = hauteurMur // 7 # 7 correspond au nombre de briques par colonne
         
-        for x in range(0, largeurEcran, largeurBrique):
+        # Génération du mur
+        for x in range(ecartLargeurBrique // 2, largeurEcran, largeurBrique):
             for y in range(30, hauteurMur, hauteurBrique):
-                briques.append(Brique(x + ecartLargeurBrique, y + ecartLargeurBrique, hauteurBrique - ecartLargeurBrique, largeurBrique - ecartLargeurBrique, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), self.pourcentageBriquesModifie, self.pourcentageBonus))
+                briques.append(Brique(x, y + ecartHauteurBrique, hauteurBrique - ecartHauteurBrique, largeurBrique - ecartLargeurBrique, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), self.pourcentageBriquesModifie, self.pourcentageBonus))
         return briques
     
     def collision(self, balle, plateforme, briques):
@@ -504,7 +507,6 @@ class Niveau:
                 # Gère le rebond et déplace la balle à l'extérieur de la brique
                 if cote_collision in ["gauche", "droite"]:
                     balle.rebond("horizontal")
-                    print("horizontal")
                     if cote_collision == "gauche":
                         print("gauche")
                         balle.x = rect_brique.left - balle.rayon * 2
@@ -513,7 +515,6 @@ class Niveau:
                         balle.x = rect_brique.right
                 else:
                     balle.rebond("vertical")
-                    print("vertical")
                     if cote_collision == "haut":
                         print("haut")
                         balle.y = rect_brique.top - balle.rayon * 2
@@ -558,10 +559,10 @@ class Jeu:
     def __init__(self):
         pygame.init()
 
-        self.fps = 75
+        self.fps = 60
         self.FramePerSec = pygame.time.Clock()
-        self.largeur = 1080
-        self.hauteur = 1920
+        self.largeur = 1280
+        self.hauteur = 720
         self.screen = pygame.display.set_mode((self.largeur, self.hauteur))
         self.running = True
         self.font = pygame.font.SysFont("consolas", 20)
