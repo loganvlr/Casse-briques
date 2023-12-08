@@ -1,3 +1,5 @@
+Logan VILLARD :
+
 10/11/2023
 Création du projet. Mise en place des choses à faire :
 I - Ecran d'acceuil
@@ -114,3 +116,40 @@ Ajout des commentaires/spécifications manquants/manquantes car je ne les avais 
 
 6/11/2023
 Modifications de la génération des briques pour créer un espacement entre chaque brique pour que se soit plus estéthique. Je dois tout de même la revoir car le mur n'est pas parfaitement centré (plus de pixels à droite qu'à gauche).
+
+Liam SAUVANET-LOUVIN :
+
+Initialisation pygame: 
+	J'ai re-vue les bases de pygame comme:
+	-initialiser une fenetre
+	-mettre des couleur en fond unie
+	-la recuperation des evenement
+
+
+
+
+
+24/11:
+	Le Projet a presque vide:
+	J'ajoute toute la structure du jeux (des class on je mais toute les fonction que je pense avoir besoin avec des pass pour visualiser le code entier du jeux)
+	J'ai gerer toute la class de la barre( du joueur) donc les collisions, deplacement sont finie est implémenter
+	J'ai commencer a crée la balle donc j'ai initialier tout les attribut de la class 
+	La class Game qui contient le corp principale du jeux est corriger est il y a des ajout de nouveauter d'est qu'un fonction d'une autre class est ajouter (exemple: pour les deplacement de la barre ou la création de la balle come atribut de la class Game)
+
+
+
+27/11:
+	Tout les deplacement de la balle est fonctionelle (elle marche avec les fonction cos est sin de la bibliotheque Math)
+	La plupart des collision sont gérer : avec la barre, les murs 
+	J'ai commencer a implementer le system de vie (quelque problemme parviennent avec ma methode de calcule de perte de vie)
+
+
+
+07/12:
+	Toute les fonction est la class brique en general a éter implementer sans problemme apparant
+	Toute les collision ont finie d'etre implémenter: avec les briques
+	
+	
+	La gestion des vie est terminer est implémenter(j'ai regler le probleme en augmentent la zone d'egibiliter a re-pouoir perdre de la vie)
+	La gestion du score est terminer est implémenter
+	Le jeux minimal est finie
