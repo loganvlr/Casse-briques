@@ -1,0 +1,116 @@
+10/11/2023
+Création du projet. Mise en place des choses à faire :
+I - Ecran d'acceuil
+   1- Afficher titre du jeu
+   2- Afficher le bouton jeu
+      A- Niveau 1
+      B- Niveau 2
+      C- Niveau 3
+      D- Niveau IA
+   3- Afficher le bouton option
+   4- Afficher le bouton quitter
+   5- Afficher le bouton aide
+   6- Afficher le bouton scores
+II- Ecran de jeu
+   1- Faire un écran de pause quand on appuie sur Esc
+      A- Reprendre
+      B- Recommencer
+      C- aide
+      D- quitter
+   2- Afficher le score du joueur
+   3- Afficher le nombre de vies du joueur
+   4- Afficher les briques
+   5- Afficher la plateforme
+   6- Afficher la balle
+   7- Afficher le mur de L'IA si on est en mode IA
+   8- Afficher la plateforme de l'IA si on est en mode IA
+
+Création de la classe Bouton qui permet de créer des boutons avec des methodes pour l'afficher à l'écran et de detecter si il est cliqué ou non.
+Cette derniere methode n'est pas encore utilisee.
+
+Création de la classe Acceuil qui represente la page d'acceuil. Elle permet de naviguer entre les différentes pages et accéder au jeu via des boutons. Le titre du jeu n'est pas encore la, nous devons faire le graphisme de celui-ci.
+
+Création de la classe Jeu qui correspondra au moteur du jeu. C'est dans celui-ci que toutes les opérarions vont être ordonées/activés et c'est lui qui va gérer la fenetre du jeu.
+
+
+
+12/11/2023
+Création de la classe Texte qui permet de créer des textes, ayant une méthode pour l'afficher à l'écran.
+
+Des méthodes pour centrer les éléments ont été ajoutés aux classes Texte et Bouton. Elles permettent de centrer les éléments par rapport à un contenant ou non, par rapport à une position ou non.
+
+Une méthode get_page dans la classe Bouton a été ajouté pour obtenir la classe (la page donc) que représente le bouton en fonction de son nom.
+
+Une classe Intéraction a été créée pour gérer des différentes intéractions que pourraient avoir l'utilisateur lors de sa navigation (Touches claviers, souris, etc)
+
+Ajouts de boutons à la page acceuil pour accéder aux autres pages. Toutes les pages ne sont pas encore créées et donc si le bouton d'une classe non créée est cliqué, cela produit une erreur normale.
+
+Ajouts de textes qui vont être centrés dans les boutons pour savoir ce que représente les boutons.
+
+Même ajouts pour la classe/page Niveaux, où les boutons représentent les différents niveaux du jeu qui serviront donc de lancement du niveau. Ces boutons ne marchent pas encore.
+
+La méthode de détection de click de souris est utilisée dans la classe Jeu.
+
+
+
+12/11/2023
+Changements de noms de variables des boutons/textes de la classe Niveaux qui étaient les mêmes que ceux de la classe Acceuil. Ils ne représentaient pas les bonnes choses.
+
+
+
+19/11/2023
+Les boutons de la classe Niveaux qui représentent les différents niveaux du jeu sont fonctionnels car ces niveaux ont été rajoutés dans la méthode get_page des boutons.
+
+La méthode click a été largement modifiée/clarifiée/optimisée. Celle ci faisait tout un tas de test pour obtenir la liste des boutons de la page actuelle, alors qu'il suffisait simplement de l'obtenir via l'attribut de l'objet suivant : self.boutons où self représente la page actuelle.
+
+La même méthode a été créée dans la class Niveaux.
+
+Création de la classe Brique qui va permettre de créer une brique qui servira pour le jeu. Deux types de briques pourront être crées : les simple et les renforcées qui auront une résistance accrue.
+
+Création de la classe Plateforme qui va permettre de créer la plateforme du joueur (et de l'IA si le mode IA est activé)
+
+Création de la classe Niveau qui permet de lancer un jeu en fonction du niveau qui a été lancé.
+
+Ajouts de gestions des touches des flèches gauche et droite qui permettent de faire bouger la plateforme du joueur.
+
+
+
+20/11/2023
+Changements des variables des dimensions de la fenêtre pour essayer de faire un jeu responsive et de permettre à l'utilisateur de changer la résolution comme bon lui semble.
+
+Modifications des conditions pour déplacer la plateforme : la plateforme ne doit pas pouvoir être déplacée hors de la page.
+
+Création de la classe Balle qui représente la balle dans le jeu. Les déplacements, actualisation et gestions des angles ne sont pas encore définis.
+Son affichage en revanche est assuré.
+
+
+
+20/11/2023
+Mouvements de la balle crée.
+Gestions des collisions commencée mais beaucoup de bugs n'assure pas un fonctionnement du jeu.
+La gestion des angles est elle aussi approximative.
+
+
+20/11/2023
+Gestions des collisions avec la plateforme et tout autre éléments du jeu crée. Cependant quelques bugs minimes restent à régler (par exemple la balle reste parfois bloquée aux extrémitées de la page.)
+La génération a été revue pour pouvoir modifiée de façon directe et responsive le nombre de brique en largeur et en hauteur par exemple, et ainsi gérer automatiquement leurs largeur/hauteur en pixels.
+La vitesse de la plateforme s'adapte elle aussi à la largeur de la fenêtre.
+
+
+
+24/11/2023
+Revue de la gestions des angles car de noueaux bugs sont survenus. Ajout des rebonds à gauche et à droite des briques (je n'avais pas fais en sorte que la balle rebondisse sur les côtés gauche et droit des briques).
+
+
+
+27/11/2023
+Ajout de la gestion de score ainsi que de son affichage. L'emplacement de cet affichage est à revoir, car ce n'est pas très estéthique.
+
+
+
+1/12/2023
+Ajout des commentaires/spécifications manquants/manquantes car je ne les avais pas faites sur le vif.
+
+
+6/11/2023
+Modifications de la génération des briques pour créer un espacement entre chaque brique pour que se soit plus estéthique. Je dois tout de même la revoir car le mur n'est pas parfaitement centré (plus de pixels à droite qu'à gauche).
