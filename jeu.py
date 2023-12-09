@@ -475,10 +475,10 @@ class Niveau:
         Args:
             balle(Balle): balle du jeu.
         """
-        if balle.x <= 0 or balle.x + balle.rayon >= jeu.largeur:  # Si la balle a frappé un mur à gauche ou à droite
+        if balle.x - balle.rayon <= 0 or balle.x + balle.rayon >= jeu.largeur:  # Si la balle a frappé un mur à gauche ou à droite
             balle.rebond("horizontal")
 
-        if balle.y <= 0 or balle.y + balle.rayon >= jeu.hauteur:  # Si la balle a frappé un mur en haut ou en bas
+        if balle.y -balle.rayon <= 0 or balle.y + balle.rayon >= jeu.hauteur:  # Si la balle a frappé un mur en haut ou en bas
             balle.rebond("vertical")
     
     def collisionBrique(self, balle):
@@ -486,18 +486,20 @@ class Niveau:
         Args:
             balle(Balle): balle du jeu.
         """
+        
         for brique in self.briques:
             # Crée des rectangles pour la balle et la brique
-            rect_balle = pygame.Rect(balle.x, balle.y, balle.rayon * 2, balle.rayon * 2)
+            rect_balle = pygame.Rect(balle.x - balle.rayon, balle.y - balle.rayon, balle.rayon * 2, balle.rayon * 2)
             rect_brique = pygame.Rect(brique.x, brique.y, brique.largeur, brique.hauteur)
 
             # Vérifie si les rectangles se chevauchent
             if rect_balle.colliderect(rect_brique):
                 # Calcule les distances entre les côtés de la balle et de la brique
                 distances = {
-                    "gauche": abs(rect_balle.right - rect_brique.left),
+                    # Calcule les distances entre les côtés correspondants de la balle et de la brique
+                    "gauche": abs(rect_brique.left - rect_balle.right),
                     "droite": abs(rect_balle.left - rect_brique.right),
-                    "haut": abs(rect_balle.bottom - rect_brique.top),
+                    "haut": abs(rect_brique.top - rect_balle.bottom),
                     "bas": abs(rect_balle.top - rect_brique.bottom)
                 }
 
@@ -512,7 +514,7 @@ class Niveau:
                         balle.x = rect_brique.left - balle.rayon * 2
                     else:
                         print("droite")
-                        balle.x = rect_brique.right
+                        balle.x = rect_brique.right + balle.rayon * 2
                 else:
                     balle.rebond("vertical")
                     if cote_collision == "haut":
@@ -520,7 +522,7 @@ class Niveau:
                         balle.y = rect_brique.top - balle.rayon * 2
                     else:
                         print("bas")
-                        balle.y = rect_brique.bottom
+                        balle.y = rect_brique.bottom + balle.rayon * 2
 
                 # Gère les vies de la brique
                 if brique.vie == 1:
@@ -602,6 +604,19 @@ class Jeu:
                     self.page.plateforme.bougeVersDroite = True
                 else:
                     self.page.plateforme.bougeVersDroite = False
+                
+                if keys[pygame.K_1]:
+                    self.fps = 10
+                    
+                if keys[pygame.K_2]:
+                    self.fps = 1
+
+                if keys[pygame.K_6]:
+                    self.fps = 60
+                
+                if keys[pygame.K_7]:
+                    self.fps = 0
+
                     
             pygame.display.flip()
 
