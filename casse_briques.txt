@@ -35,3 +35,5 @@ fixer limite pour deplacement plateforme
 faire que la balle ne puisse pas rester bloquée dans un coin
 
 on peut avancer la plateforme ?
+
+

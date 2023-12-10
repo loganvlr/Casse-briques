@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+import math
 
 pygame.init()
 
@@ -337,7 +338,7 @@ class Plateforme:
 
 class Balle:
     def __init__(self):
-        self.largeur = jeu.largeur / 128
+        self.largeur = jeu.largeur / 64
         self.hauteur = self.largeur
         self.rayon = self.largeur // 2
         self.x = jeu.largeur // 2 - random.randint(-150, 150)
@@ -489,40 +490,28 @@ class Niveau:
         
         for brique in self.briques:
             # Crée des rectangles pour la balle et la brique
-            rect_balle = pygame.Rect(balle.x - balle.rayon, balle.y - balle.rayon, balle.rayon * 2, balle.rayon * 2)
+            rect_balle = pygame.Rect(balle.x - balle.rayon, balle.y - balle.rayon, balle.largeur, balle.hauteur)
             rect_brique = pygame.Rect(brique.x, brique.y, brique.largeur, brique.hauteur)
-
+            # pygame.draw.rect(jeu.screen, (255, 0, 0), rect_balle)
             # Vérifie si les rectangles se chevauchent
             if rect_balle.colliderect(rect_brique):
                 # Calcule les distances entre les côtés de la balle et de la brique
                 distances = {
                     # Calcule les distances entre les côtés correspondants de la balle et de la brique
-                    "gauche": abs(rect_brique.left - rect_balle.right),
-                    "droite": abs(rect_balle.left - rect_brique.right),
-                    "haut": abs(rect_brique.top - rect_balle.bottom),
-                    "bas": abs(rect_balle.top - rect_brique.bottom)
-                }
-
+                    "gauche": math.sqrt((rect_brique.left - rect_balle.right)**2),
+                    "droite": math.sqrt((rect_brique.right - rect_balle.left)**2),
+                    "haut": math.sqrt((rect_brique.top - rect_balle.bottom)**2),
+                    "bas": math.sqrt((rect_brique.bottom - rect_balle.top)**2)
+                }                
                 # Détermine le côté de collision en fonction de la distance minimale
                 cote_collision = min(distances, key=distances.get)
 
                 # Gère le rebond et déplace la balle à l'extérieur de la brique
                 if cote_collision in ["gauche", "droite"]:
                     balle.rebond("horizontal")
-                    if cote_collision == "gauche":
-                        print("gauche")
-                        balle.x = rect_brique.left - balle.rayon * 2
-                    else:
-                        print("droite")
-                        balle.x = rect_brique.right + balle.rayon * 2
                 else:
                     balle.rebond("vertical")
-                    if cote_collision == "haut":
-                        print("haut")
-                        balle.y = rect_brique.top - balle.rayon * 2
-                    else:
-                        print("bas")
-                        balle.y = rect_brique.bottom + balle.rayon * 2
+
 
                 # Gère les vies de la brique
                 if brique.vie == 1:
@@ -552,7 +541,7 @@ class Niveau:
         self.collision(self.balle, self.plateforme, self.briques)
         
         pygame.draw.rect(screen, self.plateforme.couleur, self.plateforme.rendu, 0, 20)
-        pygame.draw.circle(screen, self.balle.couleur, (self.balle.x, self.balle.y), self.balle.rayon * 2)
+        pygame.draw.circle(screen, self.balle.couleur, (self.balle.x, self.balle.y), self.balle.rayon)
         
 
 # ==================== Jeu ====================
