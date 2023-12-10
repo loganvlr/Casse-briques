@@ -345,7 +345,7 @@ class Balle:
         self.y = jeu.hauteur - random.randint(jeu.hauteur // 50 * 5, jeu.hauteur - jeu.hauteur // 50 * 7)
         self.angle = random.uniform(math.pi * 0.75, math.pi * 1.25)
         self.couleur = (0, 0, 0)
-        self.vitesse = jeu.hauteur / 72
+        self.vitesse = jeu.largeur / 1.9
     
     def rebond(self, axe):
         """Cette méthode permet de gérer les rebonds et de changer l'angle de la balle en fonction de sur quel axe la balle a rebondi.
@@ -375,8 +375,8 @@ class Balle:
     
     def mouvements(self):
         """Cette méthode permet de gérer les mouvemetns de la balle, selon son angle et sa vitesse."""
-        self.x += math.sin(self.angle) * self.vitesse * -1
-        self.y -= math.cos(self.angle) * self.vitesse * -1
+        self.x += math.sin(self.angle) * (self.vitesse * jeu.delta_time) * -1
+        self.y -= math.cos(self.angle) * (self.vitesse * jeu.delta_time) * -1
         
 class Niveau:
     
@@ -557,11 +557,17 @@ class Jeu:
         self.screen = pygame.display.set_mode((self.largeur, self.hauteur))
         self.running = True
         self.font = pygame.font.SysFont("consolas", 20)
-        
+        self.delta_time = 0
+        self.temps_precedent = pygame.time.get_ticks()
 
     def run(self):
         self.page = Accueil()
+        
+        
         while self.running:
+            temps_actuel = pygame.time.get_ticks()
+            self.delta_time = (temps_actuel - self.temps_precedent) / 1000.0  # Convertir en secondes
+            self.temps_precedent = temps_actuel
             mouse_x, mouse_y = pygame.mouse.get_pos()
             # ==================== Event detection ====================
             for event in pygame.event.get():
@@ -593,18 +599,6 @@ class Jeu:
                     self.page.plateforme.bougeVersDroite = True
                 else:
                     self.page.plateforme.bougeVersDroite = False
-                
-                if keys[pygame.K_1]:
-                    self.fps = 10
-                    
-                if keys[pygame.K_2]:
-                    self.fps = 1
-
-                if keys[pygame.K_6]:
-                    self.fps = 60
-                
-                if keys[pygame.K_7]:
-                    self.fps = 0
 
                     
             pygame.display.flip()
