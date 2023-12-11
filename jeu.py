@@ -161,6 +161,7 @@ class Bouton:
             "Niveau1": 1,
             "Niveau2": 2,
             "Niveau3": 3,
+            "Reprendre": None
         }
         # Si le nom du bouton est Quitter, on sort du jeu.
         if self.nom == "Quitter":
@@ -287,6 +288,68 @@ class Niveaux:
         pygame.draw.rect(screen, self.boutonAccueil.couleur, self.boutonAccueil.rendu, 0, 20)
         screen.blit(self.texteAccueil.rendu, self.texteAccueil.coor)
 
+class Pause:
+    def __init__(self):
+        self.couleur_transparente_opaque = (0, 0, 0, 128)  # 128 pour une opacité partielle
+
+        # Création d'une surface transparente avec une opacité partielle
+        self.surface_transparente_opaque = pygame.Surface((jeu.largeur, jeu.hauteur), pygame.SRCALPHA)
+
+
+
+        self.boutonReprendre = Bouton("Reprendre", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur)
+        self.texteReprendre = Texte("Reprendre", "white").centrer(self.boutonReprendre.largeur, self.boutonReprendre.hauteur, self.boutonReprendre.x, self.boutonReprendre.y)
+        self.boutonOptions = Bouton("Options", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 60)
+        self.texteOptions = Texte("Options", "white").centrer(self.boutonOptions.largeur, self.boutonOptions.hauteur, self.boutonOptions.x, self.boutonOptions.y)
+        self.boutonAide = Bouton("Aide", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 120)
+        self.texteAide = Texte("Aide", "white").centrer(self.boutonAide.largeur, self.boutonAide.hauteur, self.boutonAide.x, self.boutonAide.y)
+        self.boutonScores = Bouton("Scores", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 180)
+        self.texteScores = Texte("Scores", "white").centrer(self.boutonScores.largeur, self.boutonScores.hauteur, self.boutonScores.x, self.boutonScores.y)
+        self.boutonMenu = Bouton("Accueil", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur, 0, 240)
+        self.texteMenu = Texte("Menu", "white").centrer(self.boutonMenu.largeur, self.boutonMenu.hauteur, self.boutonMenu.x, self.boutonMenu.y)
+        
+        self.boutons = [self.boutonReprendre, self.boutonOptions, self.boutonMenu, self.boutonAide, self.boutonScores]
+        self.textes = [self.texteReprendre, self.texteOptions, self.texteMenu, self.texteAide, self.texteScores]
+        
+    def click(self, x, y):
+        """Cette méthode changer de page/fenêtre si un bouton est cliqué. Quand un bouton est cliqué, on obtient la classe que représente le bouton pour ensuite définir la page sur la classe de la nouvelle page (pour rappel, chaque page a sa propre classe).
+        Args:
+            x(int or float):  position x du curseur de la souris.
+            y(int or float):  position y du curseur de la souris.
+        Return:
+            (bool): True si la page est changé, False sinon.
+        """
+        boutons = self.boutons
+
+        for bouton in boutons:
+            if bouton.isClicked(x, y):
+                page_classe = bouton.get_page()
+                
+                if page_classe is not None:
+                    jeu.page = page_classe()
+                elif page_classe == None:
+                    jeu.pause = False
+                return True
+        return False
+        
+    def draw(self, screen):
+        self.surface_transparente_opaque.fill(self.couleur_transparente_opaque)
+        screen.blit(self.surface_transparente_opaque, (0, 0))
+        
+        pygame.draw.rect(screen, self.boutonReprendre.couleur, self.boutonReprendre.rendu, 0, 20)
+        screen.blit(self.texteReprendre.rendu, self.texteReprendre.coor)
+        
+        pygame.draw.rect(screen, self.boutonOptions.couleur, self.boutonOptions.rendu, 0, 20)
+        screen.blit(self.texteOptions.rendu, self.texteOptions.coor)
+        
+        pygame.draw.rect(screen, self.boutonMenu.couleur, self.boutonMenu.rendu, 0, 20)
+        screen.blit(self.texteMenu.rendu, self.texteMenu.coor)
+        
+        pygame.draw.rect(screen, self.boutonAide.couleur, self.boutonAide.rendu, 0, 20)
+        screen.blit(self.texteAide.rendu, self.texteAide.coor)
+        
+        pygame.draw.rect(screen, self.boutonScores.couleur, self.boutonScores.rendu, 0, 20)
+        screen.blit(self.texteScores.rendu, self.texteScores.coor)
 class Options:
     pass
 
@@ -345,7 +408,7 @@ class Balle:
         self.y = jeu.hauteur - random.randint(jeu.hauteur // 50 * 5, jeu.hauteur - jeu.hauteur // 50 * 7)
         self.angle = random.uniform(math.pi * 0.75, math.pi * 1.25)
         self.couleur = (0, 0, 0)
-        self.vitesse = jeu.hauteur / 72
+        self.vitesse = jeu.largeur / 1.9
     
     def rebond(self, axe):
         """Cette méthode permet de gérer les rebonds et de changer l'angle de la balle en fonction de sur quel axe la balle a rebondi.
@@ -375,8 +438,8 @@ class Balle:
     
     def mouvements(self):
         """Cette méthode permet de gérer les mouvemetns de la balle, selon son angle et sa vitesse."""
-        self.x += math.sin(self.angle) * self.vitesse * -1
-        self.y -= math.cos(self.angle) * self.vitesse * -1
+        self.x += math.sin(self.angle) * (self.vitesse * jeu.delta_time) * -1
+        self.y -= math.cos(self.angle) * (self.vitesse * jeu.delta_time) * -1
         
 class Niveau:
     
@@ -391,12 +454,10 @@ class Niveau:
         self.plateforme = Plateforme()
         self.balle = Balle()
         self.score = 0
-        self.boutonAccueil = Bouton("Accueil", 200, 50, (125, 160, 202)).centrer(jeu.largeur, jeu.hauteur)
-        self.texteAccueil = Texte("Accueil", "white").centrer(self.boutonAccueil.largeur, self.boutonAccueil.hauteur, self.boutonAccueil.x, self.boutonAccueil.y)
         self.texteScore = Texte(f"Score : {self.score}", "black").centrer(largeurConteneur = jeu.largeur)
         
-        self.boutons = [self.boutonAccueil]
-        self.textes = [self.texteAccueil, self.texteScore]
+        self.boutons = []
+        self.textes = [self.texteScore]
 
     def click(self, x, y):
         """Cette méthode changer de page/fenêtre si un bouton est cliqué. Quand un bouton est cliqué, on obtient la classe que représente le bouton pour ensuite définir la page sur la classe de la nouvelle page (pour rappel, chaque page a sa propre classe).
@@ -476,10 +537,20 @@ class Niveau:
         Args:
             balle(Balle): balle du jeu.
         """
-        if balle.x - balle.rayon <= 0 or balle.x + balle.rayon >= jeu.largeur:  # Si la balle a frappé un mur à gauche ou à droite
+        if balle.x - balle.rayon <= 0:
+            balle.x = balle.largeur # On ajoute la largeur de la balle pour que la balle ne soit pas collée au mur
+            balle.rebond("horizontal")
+            
+        elif balle.x + balle.rayon >= jeu.largeur:
+            balle.x = jeu.largeur - balle.largeur # On retire la largeur de la balle pour que la balle ne soit pas collée au mur
             balle.rebond("horizontal")
 
-        if balle.y -balle.rayon <= 0 or balle.y + balle.rayon >= jeu.hauteur:  # Si la balle a frappé un mur en haut ou en bas
+        elif balle.y - balle.rayon <= 0:
+            balle.y = balle.hauteur # On ajoute la hauteur de la balle pour que la balle ne soit pas collée au mur
+            balle.rebond("vertical")
+            
+        elif balle.y + balle.rayon >= jeu.hauteur:
+            balle.y = jeu.hauteur - balle.hauteur # On retire la hauteur de la balle pour que la balle ne soit pas collée au mur
             balle.rebond("vertical")
     
     def collisionBrique(self, balle):
@@ -487,12 +558,11 @@ class Niveau:
         Args:
             balle(Balle): balle du jeu.
         """
-        
         for brique in self.briques:
             # Crée des rectangles pour la balle et la brique
             rect_balle = pygame.Rect(balle.x - balle.rayon, balle.y - balle.rayon, balle.largeur, balle.hauteur)
             rect_brique = pygame.Rect(brique.x, brique.y, brique.largeur, brique.hauteur)
-            pygame.draw.rect(jeu.screen, (255, 0, 0), rect_balle)
+            # pygame.draw.rect(jeu.screen, (255, 0, 0), rect_balle)
             
             # Vérifie si les rectangles se chevauchent
             if rect_balle.colliderect(rect_brique):
@@ -515,7 +585,6 @@ class Niveau:
                     balle.rebond("vertical")
                     print("vertical")
 
-
                 # Gère les vies de la brique
                 if brique.vie == 1:
                     self.briques.remove(brique)
@@ -529,8 +598,6 @@ class Niveau:
     
     def draw(self, screen):
         """Cette méthode permet d'afficher dans la fenêtre les différents éléments de la page."""
-        pygame.draw.rect(screen, self.boutonAccueil.couleur, self.boutonAccueil.rendu, 0, 20)
-        screen.blit(self.texteAccueil.rendu, self.texteAccueil.coor)
         
         self.texteScore.texte = f"Score : {self.score}"
         self.texteScore.rendu = self.texteScore.font.render(self.texteScore.texte, True, self.texteScore.couleur)
@@ -539,9 +606,10 @@ class Niveau:
         for brique in self.briques:
             pygame.draw.rect(screen, brique.couleur, brique.rendu, 0)
         
-        self.plateforme.actualisation()
-        self.balle.mouvements()
-        self.collision(self.balle, self.plateforme, self.briques)
+        if not jeu.pause:
+            self.plateforme.actualisation()
+            self.balle.mouvements()
+            self.collision(self.balle, self.plateforme, self.briques)
         
         pygame.draw.rect(screen, self.plateforme.couleur, self.plateforme.rendu, 0, 20)
         pygame.draw.circle(screen, self.balle.couleur, (self.balle.x, self.balle.y), self.balle.rayon)
@@ -560,16 +628,22 @@ class Jeu:
         self.screen = pygame.display.set_mode((self.largeur, self.hauteur))
         self.running = True
         self.font = pygame.font.SysFont("consolas", 20)
-        
+        self.delta_time = 0
+        self.temps_precedent = pygame.time.get_ticks()
+        self.pause = False
 
     def run(self):
         self.page = Accueil()
         while self.running:
+            temps_actuel = pygame.time.get_ticks()
+            self.delta_time = (temps_actuel - self.temps_precedent) / 1000.0  # Convertir en secondes
+            self.temps_precedent = temps_actuel
             mouse_x, mouse_y = pygame.mouse.get_pos()
             # ==================== Event detection ====================
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                
                 
                     
             # ==================== Update ====================
@@ -579,38 +653,48 @@ class Jeu:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.page.click(mouse_x, mouse_y)
+                    if self.pause:
+                        self.pageSecondaire.click(mouse_x, mouse_y)
 
             if isinstance(self.page, Niveau):
-                keys = pygame.key.get_pressed()
-                if keys[pygame.K_LEFT] and self.page.plateforme.x > 5:
-                    self.page.plateforme.x -= self.page.vitesseRaquette
-                if keys[pygame.K_LEFT]:
-                    self.page.plateforme.bougeVersGauche = True
-                else:
-                    self.page.plateforme.bougeVersGauche = False
-                    
-                if keys[pygame.K_RIGHT] and self.page.plateforme.x + self.page.plateforme.largeur < self.largeur - 5:
-                    self.page.plateforme.x += self.page.vitesseRaquette
-                    
-                if keys[pygame.K_RIGHT]:
-                    self.page.plateforme.bougeVersDroite = True
-                else:
-                    self.page.plateforme.bougeVersDroite = False
-                
-                if keys[pygame.K_1]:
-                    self.fps = 10
-                    
-                if keys[pygame.K_2]:
-                    self.fps = 1
+                if self.pause:
+                    self.pageSecondaire = Pause()
+                    self.pageSecondaire.draw(self.screen)
 
-                if keys[pygame.K_6]:
-                    self.fps = 60
-                
-                if keys[pygame.K_5]:
-                    self.fps = 144
-                
-                if keys[pygame.K_7]:
-                    self.fps = 0
+                else:
+                    keys = pygame.key.get_pressed()
+                    if keys[pygame.K_LEFT] and self.page.plateforme.x > 5:
+                        self.page.plateforme.x -= self.page.vitesseRaquette
+                    if keys[pygame.K_LEFT]:
+                        self.page.plateforme.bougeVersGauche = True
+                    else:
+                        self.page.plateforme.bougeVersGauche = False
+                        
+                    if keys[pygame.K_RIGHT] and self.page.plateforme.x + self.page.plateforme.largeur < self.largeur - 5:
+                        self.page.plateforme.x += self.page.vitesseRaquette
+                        
+                    if keys[pygame.K_RIGHT]:
+                        self.page.plateforme.bougeVersDroite = True
+                    else:
+                        self.page.plateforme.bougeVersDroite = False
+                    
+                    if keys[pygame.K_ESCAPE]:
+                        self.pause = True
+                    
+                    if keys[pygame.K_5]:
+                        self.fps = 60
+                    
+                    if keys[pygame.K_6]:
+                        self.fps = 100
+                    
+                    if keys[pygame.K_7]:
+                        self.fps = 120
+                    
+                    if keys[pygame.K_8]:
+                        self.fps = 144
+                    
+                    if keys[pygame.K_9]:
+                        self.fps = 240
 
                     
             pygame.display.flip()
