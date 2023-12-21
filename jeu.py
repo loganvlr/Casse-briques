@@ -502,7 +502,7 @@ class Niveau:
         # Génération du mur
         for x in range(ecartLargeurBrique // 2, largeurEcran, largeurBrique):
             for y in range(30, hauteurMur, hauteurBrique):
-                briques.append(Brique(x, y + ecartHauteurBrique, hauteurBrique - ecartHauteurBrique, largeurBrique - ecartLargeurBrique, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), self.pourcentageBriquesModifie, self.pourcentageBonus))
+                briques.append(Brique(x, y, hauteurBrique, largeurBrique, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), self.pourcentageBriquesModifie, self.pourcentageBonus))
         return briques
     
     def collision(self, balle, plateforme, briques):
@@ -559,41 +559,47 @@ class Niveau:
             balle(Balle): balle du jeu.
         """
         for brique in self.briques:
-            # Crée des rectangles pour la balle et la brique
-            rect_balle = pygame.Rect(balle.x - balle.rayon, balle.y - balle.rayon, balle.largeur, balle.hauteur)
-            rect_brique = pygame.Rect(brique.x, brique.y, brique.largeur, brique.hauteur)
-            # pygame.draw.rect(jeu.screen, (255, 0, 0), rect_balle)
-            
-            # Vérifie si les rectangles se chevauchent
-            if rect_balle.colliderect(rect_brique):
-                cote_collision = None
-                # Calcule les distances entre les côtés de la balle et de la brique
-                if (rect_balle.centery >= rect_brique.top and rect_balle.centery <= rect_brique.bottom) and rect_balle.right >= rect_brique.left and rect_balle.right <= rect_brique.right:
-                    cote_collision = "gauche"
-                elif (rect_balle.centery >= rect_brique.top and rect_balle.centery <= rect_brique.bottom) and rect_balle.left <= rect_brique.right and rect_balle.left >= rect_brique.left:
-                    cote_collision = "droite"
-                elif ((rect_balle.left >= rect_brique.left and rect_balle.left <= rect_brique.right) or (rect_balle.right >= rect_brique.left and rect_balle.right <= rect_brique.right)) and rect_balle.bottom >= rect_brique.top and rect_balle.bottom <= rect_brique.bottom:
-                    cote_collision = "haut"
-                elif ((rect_balle.left >= rect_brique.left and rect_balle.left <= rect_brique.right) or (rect_balle.right >= rect_brique.left and rect_balle.right <= rect_brique.right)) and rect_balle.top <= rect_brique.bottom and rect_balle.top >= rect_brique.top:
-                    cote_collision = "bas"
-
-                # Gère le rebond et déplace la balle à l'extérieur de la brique
-                if cote_collision in ["gauche", "droite"]:
-                    balle.rebond("horizontal")
-                    print("horizontal")
+            if brique.rendu.collidepoint(balle.x, balle.y + balle.rayon):
+                balle.rebond("vertical")
+                print("vertical")
+                if brique.vie == 1:
+                    self.briques.remove(brique)
+                    self.score = self.score + 10
                 else:
-                    balle.rebond("vertical")
-                    print("vertical")
+                    brique.vie -= 1
+            elif brique.rendu.collidepoint(balle.x, balle.y - balle.rayon):
+                balle.rebond("vertical")
+                print("vertical")
+                if brique.vie == 1:
+                    self.briques.remove(brique)
+                    self.score = self.score + 10
+                else:
+                    brique.vie -= 1
 
+                
+            elif brique.rendu.collidepoint(balle.x + balle.rayon, balle.y):
+                print("horizontal")
+                print(balle.angle)
+                balle.rebond("horizontal")
+                print(balle.angle)
                 # Gère les vies de la brique
                 if brique.vie == 1:
                     self.briques.remove(brique)
                     self.score = self.score + 10
                 else:
                     brique.vie -= 1
-                
-                # Arrête de vérifier les autres briques
-                break
+            elif brique.rendu.collidepoint(balle.x - balle.rayon, balle.y):
+                print("horizontal")
+                print(balle.angle)
+                balle.rebond("horizontal")
+                print(balle.angle)
+                # Gère les vies de la brique
+                if brique.vie == 1:
+                    self.briques.remove(brique)
+                    self.score = self.score + 10
+                else:
+                    brique.vie -= 1
+
 
     
     def draw(self, screen):
@@ -608,8 +614,9 @@ class Niveau:
         
         if not jeu.pause:
             self.plateforme.actualisation()
-            self.balle.mouvements()
             self.collision(self.balle, self.plateforme, self.briques)
+            self.balle.mouvements()
+            
         
         pygame.draw.rect(screen, self.plateforme.couleur, self.plateforme.rendu, 0, 20)
         pygame.draw.circle(screen, self.balle.couleur, (self.balle.x, self.balle.y), self.balle.rayon)
@@ -623,8 +630,8 @@ class Jeu:
 
         self.fps = 60
         self.FramePerSec = pygame.time.Clock()
-        self.largeur = 1280
-        self.hauteur = 720
+        self.largeur = 1920
+        self.hauteur = 1080
         self.screen = pygame.display.set_mode((self.largeur, self.hauteur))
         self.running = True
         self.font = pygame.font.SysFont("consolas", 20)
