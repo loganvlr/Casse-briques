@@ -1,0 +1,2 @@
+Passer de flip() à update()
+Choses à faire avec le width des boutons
