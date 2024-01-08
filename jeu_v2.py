@@ -2,6 +2,158 @@ import pygame
 import random
 import math
 
+class Flexbox:
+    def __init__(self, elements, largeur, hauteur, x = 0, y = 0, flex_direction = "row", justify_content = "flex-start", align_content = "flex-start", taux_espace_justify = 0, taux_espace_align = 0, centrer_largeur = False, centrer_hauteur = False) -> None:
+        """ Cette méthode permet d'initialiser une flexbox
+        Args:
+            elements (list): liste des éléments de la flexbox
+            largeur (int or float): largeur de la flexbox
+            hauteur (int or float): hauteur de la flexbox
+            x (int or float, optional): position x de la flexbox. Defaults to 0.
+            y (int or float, optional): position y de la flexbox. Defaults to 0.
+            flex_direction (str, optional): direction de la flexbox. Defaults to "row".
+            justify_content (str, optional): alignement horizontal des éléments de la flexbox. Defaults to "flex-start".
+            align_content (str, optional): alignement vertical des éléments de la flexbox. Defaults to "flex-start".
+            taux_espace_justify (int or float, optional): taux d'espace entre les éléments de la flexbox. Defaults to 0.
+            taux_espace_align (int or float, optional): taux d'espace entre les éléments de la flexbox. Defaults to 0.
+            centrer_largeur (bool, optional): centrer la flexbox en largeur. Defaults to False.
+            centrer_hauteur (bool, optional): centrer la flexbox en hauteur. Defaults to False.
+        """
+        self.nb_elements = len(elements)
+        self.elements = elements
+        self.flex_direction = flex_direction
+        self.justify_content = justify_content
+        self.align_content = align_content
+        self.taux_espace_justify = taux_espace_justify
+        self.taux_espace_align = taux_espace_align
+
+        
+        # Définir la largeur et la hauteur de la flexbox
+        if largeur <= 1: # Si la largeur est inférieure ou égale à 1, on la multiplie par la largeur de la fenêtre (c'est un pourcentage)
+            self.largeur = largeur * jeu.largeur
+        else:
+            self.largeur = largeur
+        if hauteur <= 1:
+            self.hauteur = hauteur * jeu.hauteur
+        else:
+            self.hauteur = hauteur
+        
+        
+        # Définir la position de la flexbox
+        if not centrer_largeur and not centrer_hauteur:
+            if x <= 1:
+                self.x = x * jeu.largeur
+            else:
+                self.x = x
+            if y <= 1:
+                self.y = y * jeu.hauteur
+            else:
+                self.y = y
+            
+        elif centrer_largeur and not centrer_hauteur:
+            self.x = self.centrerLargeur()
+            if y <= 1:
+                self.y = y * jeu.hauteur
+            else:
+                self.y = y
+                
+        elif not centrer_largeur and centrer_hauteur:
+            if x <= 1:
+                self.x = x * jeu.largeur
+            else:
+                self.x = x
+            self.y = self.centrerHauteur()
+            
+        else:
+            self.centrer(centrer_largeur, centrer_hauteur)
+        
+        
+        
+        # Définir la largeur des éléments
+        if self.justify_content == "space-between":
+            self.justify_space_between()
+            
+        elif self.flex_direction == "column":
+            largeur = self.largeur
+            for element in self.elements:
+                element.largeur = largeur
+                element.x = self.x
+                
+        elif self.flex_direction == "row":
+            largeur = self.largeur / self.nb_elements
+            for num, element in enumerate(self.elements):
+                element.largeur = largeur
+                element.x = self.x + (element.largeur * num)
+        
+        # Définir la hauteur des éléments
+        if self.align_content == "space-between":
+            self.align_space_between()
+            
+        elif flex_direction == "column":
+            hauteur = self.hauteur / self.nb_elements
+            for num, element in enumerate(self.elements):
+                element.hauteur = hauteur
+                element.y = self.y + (element.hauteur * num)
+                
+        elif flex_direction == "row":
+            hauteur = self.hauteur
+            for element in self.elements:
+                element.hauteur = hauteur
+                element.y = self.y
+    
+    def justify_space_between(self):
+        """ Cette méthode permet de placer les éléments de la flexbox avec un espace entre eux en largeur
+        """
+        nb_espaces = self.nb_elements - 1
+        
+        # Calculer l'espace entre les éléments
+        total_espace = self.largeur * self.taux_espace_justify
+        espace = total_espace / nb_espaces
+
+        # Calculer la largeur des éléments
+        largeur_elements = self.largeur - total_espace
+        largeur = largeur_elements / self.nb_elements
+
+        # Placer les éléments
+        for num, element in enumerate(self.elements):
+            element.largeur = largeur
+            element.x = self.x + (element.largeur * num) + (espace * num)
+    
+    def align_space_between(self):
+        """ Cette méthode permet de placer les éléments de la flexbox avec un espace entre eux en hauteur
+        """
+        nb_espaces = self.nb_elements - 1
+        
+        # Calculer l'espace entre les éléments
+        total_espace = self.hauteur * self.taux_espace_align
+        espace = total_espace / nb_espaces
+
+        # Calculer la hauteur des éléments
+        hauteur_elements = self.hauteur - total_espace
+        hauteur = hauteur_elements / self.nb_elements
+
+        # Placer les éléments
+        for num, element in enumerate(self.elements):
+            element.hauteur = hauteur
+            element.y = self.y + (element.hauteur * num) + (espace * num)
+    
+    def centrerLargeur(self):
+        return jeu.largeur / 2 - self.largeur / 2
+    
+    def centrerHauteur(self):
+        return jeu.hauteur / 2 - self.hauteur / 2
+    
+    def centrer(self, largeur = False, hauteur = False):
+        print("centrer")
+        if largeur:
+            self.x = self.centrerLargeur()
+        if hauteur:
+            self.y = self.centrerHauteur()
+        return self
+
+
+
+
 class Boutons:
     def __init__(self, fenetre, texte, x, y, largeur, hauteur, couleur = (255, 255, 255), couleur_texte = (0, 0, 0), largeur_cote = 0, arrondissements_bords = 0, arrondissement_haut_gauche = 0, arrondissement_haut_droit = 0, arrondissement_bas_gauche = 0, arrondissement_bas_droit = 0, action = None, page = None) -> None:
         """Cette méthode permet d'initialiser un bouton
@@ -36,11 +188,12 @@ class Boutons:
         self.arrondissement_bas_droit = arrondissement_bas_droit
         self.action = action
         self.page = page
-        self.rendu =  pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
+        
     
     def afficher(self, fenetre):
         """Cette méthode permet d'afficher le bouton à l'écran
         """
+        self.rendu =  pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
         pygame.draw.rect(fenetre, self.couleur, self.rendu, width = self.largeur_cote , border_radius = self.arrondissements_bords, border_top_left_radius = self.arrondissement_haut_gauche, border_top_right_radius = self.arrondissement_haut_droit, border_bottom_left_radius = self.arrondissement_bas_gauche, border_bottom_right_radius = self.arrondissement_bas_droit)
         fenetre.blit(self.texte, (self.x + (self.largeur / 2 - self.texte.get_width() / 2), self.y + (self.hauteur / 2 - self.texte.get_height() / 2)))
     
@@ -182,7 +335,7 @@ class Accueil(Page):
                                      action = "Quitter").centrer(jeu.largeur, jeu.hauteur, 0, 380)
         
         self.boutons = [self.boutonJouer, self.boutonOptions, self.boutonAide, self.boutonScores, self.boutonQuitter]
-
+        flex = Flexbox(self.boutons, 0.20, 0.45, flex_direction="column", align_content="space-between", taux_espace_align=0.1, centrer_largeur=True, y = 0.45)
 class Niveaux(Page):
     def __init__(self) -> None:
         self.boutonAccueil = Boutons(jeu.fenetre, "Accueil", 100, 100, 200, 100, (150, 178, 233), (255, 255, 255), 10, page = Accueil).centrer(jeu.largeur, jeu.hauteur)
