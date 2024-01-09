@@ -100,6 +100,10 @@ class Flexbox:
             for element in self.elements:
                 element.hauteur = hauteur
                 element.y = self.y
+        
+        for element in self.elements:
+            element.x_origine = element.x
+            element.y_origine = element.y
     
     def justify_space_between(self):
         """ Cette méthode permet de placer les éléments de la flexbox avec un espace entre eux en largeur
@@ -155,7 +159,7 @@ class Flexbox:
 
 
 class Boutons:
-    def __init__(self, fenetre, texte, x, y, largeur, hauteur, couleur = (255, 255, 255), couleur_texte = (0, 0, 0), largeur_cote = 0, arrondissements_bords = 0, arrondissement_haut_gauche = 0, arrondissement_haut_droit = 0, arrondissement_bas_gauche = 0, arrondissement_bas_droit = 0, action = None, page = None) -> None:
+    def __init__(self, fenetre, texte, x, y, largeur, hauteur, couleur = (255, 255, 255), couleur_texte = (0, 0, 0), largeur_cote = 0, arrondissements_bords = 0, arrondissement_haut_gauche = 0, arrondissement_haut_droit = 0, arrondissement_bas_gauche = 0, arrondissement_bas_droit = 0, action = None, page = None, ombre_offset=5, ombre_couleur=(255, 255, 255)) -> None:
         """Cette méthode permet d'initialiser un bouton
 
         Args:
@@ -171,32 +175,80 @@ class Boutons:
             action (fonction, optional): action du bouton. Defaults to None.
             page (Page, optional): page que représente le bouton. Defaults to None.
         """
+        # Fenêtre
         self.fenetre = fenetre
+        
+        # Texte
         self.texte = jeu.police.render(texte, True, couleur_texte)
+        
+        # Coordonnées
         self.x = x
         self.y = y
+        self.x_origine = x
+        self.y_origine = y
+        
+        # Dimensions
         self.largeur = largeur
         self.hauteur = hauteur
+        self.largeur_cote = largeur_cote
+        
+        # Couleurs
         self.couleur_origine = couleur
         self.couleur = couleur
         self.couleur_texte = couleur_texte
-        self.largeur_cote = largeur_cote
+        
+        # Arrondissements
         self.arrondissements_bords = arrondissements_bords
         self.arrondissement_haut_gauche = arrondissement_haut_gauche
         self.arrondissement_haut_droit = arrondissement_haut_droit
         self.arrondissement_bas_gauche = arrondissement_bas_gauche
         self.arrondissement_bas_droit = arrondissement_bas_droit
+        
+        # Action
         self.action = action
         self.page = page
+        
+        # Ombre
+        self.ombre_offset = ombre_offset
+        self.ombre_couleur = ombre_couleur
+        self.ombre = True
         
     
     def afficher(self, fenetre):
         """Cette méthode permet d'afficher le bouton à l'écran
         """
+        # Dessiner l'ombre
+        if self.ombre:
+            ombre_rect = pygame.Rect(self.x, self.y + self.ombre_offset,
+                                    self.largeur, self.hauteur)
+            pygame.draw.rect(fenetre, self.ombre_couleur, ombre_rect, self.largeur_cote,
+                            self.arrondissements_bords,
+                            self.arrondissement_haut_gauche,
+                            self.arrondissement_haut_droit,
+                            self.arrondissement_bas_gauche,
+                            self.arrondissement_bas_droit)
+        
+        # Dessiner le bouton
         self.rendu =  pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
-        pygame.draw.rect(fenetre, self.couleur, self.rendu, width = self.largeur_cote , border_radius = self.arrondissements_bords, border_top_left_radius = self.arrondissement_haut_gauche, border_top_right_radius = self.arrondissement_haut_droit, border_bottom_left_radius = self.arrondissement_bas_gauche, border_bottom_right_radius = self.arrondissement_bas_droit)
+        pygame.draw.rect(fenetre, self.couleur, self.rendu, self.largeur_cote,
+                        self.arrondissements_bords,
+                        self.arrondissement_haut_gauche,
+                        self.arrondissement_haut_droit,
+                        self.arrondissement_bas_gauche,
+                        self.arrondissement_bas_droit)
+        
+        # Dessiner le texte
         fenetre.blit(self.texte, (self.x + (self.largeur / 2 - self.texte.get_width() / 2), self.y + (self.hauteur / 2 - self.texte.get_height() / 2)))
-    
+
+        if not self.ombre:
+            encadrement_rect = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
+            pygame.draw.rect(fenetre, self.ombre_couleur, encadrement_rect, self.ombre_offset,
+                            self.arrondissements_bords,
+                            self.arrondissement_haut_gauche,
+                            self.arrondissement_haut_droit,
+                            self.arrondissement_bas_gauche,
+                            self.arrondissement_bas_droit)
+        
     def survoler(self):
         """Cette méthode permet de savoir si le bouton est survolé par la souris
 
@@ -270,37 +322,6 @@ class Boutons:
 
 
 
-
-class BoutonsAvecOmbre(Boutons):
-    def __init__(self, fenetre, texte, x, y, largeur, hauteur, couleur=(255, 255, 255), couleur_texte=(0, 0, 0),
-                 largeur_cote=0, arrondissements_bords=0, arrondissement_haut_gauche=0,
-                 arrondissement_haut_droit=0, arrondissement_bas_gauche=0, arrondissement_bas_droit=0,
-                 action=None, page=None, ombre_offset=5, ombre_couleur=(255, 255, 255)) -> None:
-        super().__init__(fenetre, texte, x, y, largeur, hauteur, couleur, couleur_texte, largeur_cote,
-                         arrondissements_bords, arrondissement_haut_gauche, arrondissement_haut_droit,
-                         arrondissement_bas_gauche, arrondissement_bas_droit, action, page)
-
-        self.ombre_offset = ombre_offset
-        self.ombre_couleur = ombre_couleur
-
-    def afficher(self, fenetre):
-        # Dessiner l'ombre
-        ombre_rect = pygame.Rect(self.x, self.y + self.ombre_offset,
-                                 self.largeur, self.hauteur)
-        pygame.draw.rect(fenetre, self.ombre_couleur, ombre_rect, width=self.largeur_cote,
-                         border_radius=self.arrondissements_bords,
-                         border_top_left_radius=self.arrondissement_haut_gauche,
-                         border_top_right_radius=self.arrondissement_haut_droit,
-                         border_bottom_left_radius=self.arrondissement_bas_gauche,
-                         border_bottom_right_radius=self.arrondissement_bas_droit)
-
-        # Appeler la méthode d'affichage de la classe parente
-        super().afficher(fenetre)
-
-
-
-
-
 class Page:
     def __init__(self) -> None:
         pass
@@ -311,31 +332,31 @@ class Page:
 
 class Accueil(Page):
     def __init__(self) -> None:
-        self.boutonJouer = BoutonsAvecOmbre(jeu.fenetre, "Jouer", 100, 100, 350, 80, (150, 178, 233), (255, 255, 255),
+        self.boutonJouer = Boutons(jeu.fenetre, "Jouer", 100, 100, 350, 80, (30, 30, 30), (255, 255, 255),
                                            arrondissement_haut_gauche=10, arrondissement_haut_droit=10,
                                            arrondissement_bas_gauche=35, arrondissement_bas_droit=35,
-                                           page = Niveaux).centrer(jeu.largeur, jeu.hauteur)
+                                           page = Niveaux)
         
-        self.boutonOptions = BoutonsAvecOmbre(jeu.fenetre, "Options", 100, 100, 350, 80, (150, 178, 233), (255, 255, 255),
+        self.boutonOptions = Boutons(jeu.fenetre, "Options", 100, 100, 350, 80, (30, 30, 30), (255, 255, 255),
                                      arrondissement_haut_gauche = 10, arrondissement_haut_droit = 10,
                                      arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35,
-                                     page = Options).centrer(jeu.largeur, jeu.hauteur, 0, 95)
+                                     page = Options)
         
-        self.boutonAide = BoutonsAvecOmbre(jeu.fenetre, "Aide", 100, 100, 350, 80, (150, 178, 233), (255, 255, 255),
+        self.boutonAide = Boutons(jeu.fenetre, "Aide", 100, 100, 350, 80, (30, 30, 30), (255, 255, 255),
                                   arrondissement_haut_gauche = 10, arrondissement_haut_droit = 10,
-                                  arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35).centrer(jeu.largeur, jeu.hauteur, 0, 190)
+                                  arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35)
         
-        self.boutonScores = BoutonsAvecOmbre(jeu.fenetre, "Scores", 100, 100, 350, 80, (150, 178, 233), (255, 255, 255),
+        self.boutonScores = Boutons(jeu.fenetre, "Scores", 100, 100, 350, 80, (30, 30, 30), (255, 255, 255),
                                     arrondissement_haut_gauche = 10, arrondissement_haut_droit = 10,
-                                    arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35).centrer(jeu.largeur, jeu.hauteur, 0, 285)
+                                    arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35)
         
-        self.boutonQuitter = BoutonsAvecOmbre(jeu.fenetre, "Quitter", 100, 100, 350, 80, (150, 178, 233), (255, 255, 255),
+        self.boutonQuitter = Boutons(jeu.fenetre, "Quitter", 100, 100, 350, 80, (30, 30, 30), (255, 255, 255),
                                      arrondissement_haut_gauche = 10, arrondissement_haut_droit = 10,
                                      arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35,
-                                     action = "Quitter").centrer(jeu.largeur, jeu.hauteur, 0, 380)
+                                     action = "Quitter")
         
         self.boutons = [self.boutonJouer, self.boutonOptions, self.boutonAide, self.boutonScores, self.boutonQuitter]
-        flex = Flexbox(self.boutons, 0.20, 0.45, flex_direction="column", align_content="space-between", taux_espace_align=0.1, centrer_largeur=True, y = 0.45)
+        menu = Flexbox(self.boutons, 0.20, 0.45, flex_direction="column", align_content="space-between", taux_espace_align=0.1, centrer_largeur=True, y = 0.45)
 class Niveaux(Page):
     def __init__(self) -> None:
         self.boutonAccueil = Boutons(jeu.fenetre, "Accueil", 100, 100, 200, 100, (150, 178, 233), (255, 255, 255), 10, page = Accueil).centrer(jeu.largeur, jeu.hauteur)
@@ -360,17 +381,18 @@ class Jeu:
         pygame.init()
         self.fps = 60
         
-        self.largeur = 1920
-        self.hauteur = 1080
+        self.largeur = 2560# 3840
+        self.hauteur = 1440# 2160
         self.fenetre = pygame.display.set_mode((self.largeur, self.hauteur))
         
         self.police = pygame.font.SysFont("Arial", 30)
         self.executer = True
         
         
-        self.image = pygame.image.load("img/fond_blanc.jpg").convert()
-        self.image = pygame.transform.scale(self.image, (self.largeur, self.hauteur))
+        self.image = pygame.image.load("img/Menu.jpg").convert()
+        self.image = pygame.transform.scale_by(self.image, (self.largeur / self.image.get_width()))
         
+        self.position_souris = pygame.mouse.get_pos()
     
     def gerer_evenements(self):
         """Cette méthode permet de gérer les événements du jeu
@@ -382,12 +404,25 @@ class Jeu:
                 for bouton in self.page.boutons:
                     bouton.cliquer()
         
-        # Si le bouton est survolé, il change de couleur
-        for bouton in self.page.boutons:
-                if bouton.survoler():
-                    bouton.couleur = (198, 198, 233)
-                else:
-                    bouton.couleur = bouton.couleur_origine
+        # Cette condition permet de savoir si la souris a bougé, et donc de ne pas faire des calculs inutiles
+        position_souris_temp = pygame.mouse.get_pos()
+        if position_souris_temp != self.position_souris:
+            self.position_souris = position_souris_temp
+            
+            # Si le bouton est survolé, il change de couleur et s'enfonce
+            for bouton in self.page.boutons:
+                    if bouton.survoler():
+                        bouton.couleur = (90, 90, 90)
+                        if bouton.action == "Quitter":
+                            bouton.couleur = (255, 0, 0)
+                        bouton.y = bouton.y_origine + bouton.ombre_offset
+                        bouton.ombre = False
+                    
+                    # Sinon, il reprend sa couleur d'origine et remonte
+                    else:
+                        bouton.couleur = bouton.couleur_origine
+                        bouton.y = bouton.y_origine
+                        bouton.ombre = True
     
     def executer_jeu(self):
         """Cette méthode permet d'exécuter le jeu
