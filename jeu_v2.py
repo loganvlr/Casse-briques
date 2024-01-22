@@ -26,7 +26,7 @@ class Flexbox:
         self.align_content = align_content
         self.taux_espace_justify = taux_espace_justify
         self.taux_espace_align = taux_espace_align
-
+        print("test")
         
         # Définir la largeur et la hauteur de la flexbox
         if largeur <= 1: # Si la largeur est inférieure ou égale à 1, on la multiplie par la largeur de la fenêtre (c'est un pourcentage)
@@ -83,7 +83,11 @@ class Flexbox:
             largeur = self.largeur / self.nb_elements
             for num, element in enumerate(self.elements):
                 element.largeur = largeur
+                print(element.x)
                 element.x = self.x + (element.largeur * num)
+                print(element.x)
+                print()
+            print("==================")
         
         # Définir la hauteur des éléments
         if self.align_content == "space-between":
@@ -104,6 +108,12 @@ class Flexbox:
         for element in self.elements:
             element.x_origine = element.x
             element.y_origine = element.y
+            if isinstance(element, Flexbox):
+                print("Flexbox")
+                print(element.x)
+                print(element.y)
+                print(element.largeur)
+                element = Flexbox(element.elements, element.largeur, element.hauteur, element.x, element.y, element.flex_direction, element.justify_content, element.align_content, element.taux_espace_justify, element.taux_espace_align)
     
     def justify_space_between(self):
         """ Cette méthode permet de placer les éléments de la flexbox avec un espace entre eux en largeur
@@ -121,7 +131,11 @@ class Flexbox:
         # Placer les éléments
         for num, element in enumerate(self.elements):
             element.largeur = largeur
+            print(element.x)
             element.x = self.x + (element.largeur * num) + (espace * num)
+            print(element.x)
+            print()
+        print("==================")
     
     def align_space_between(self):
         """ Cette méthode permet de placer les éléments de la flexbox avec un espace entre eux en hauteur
@@ -129,17 +143,25 @@ class Flexbox:
         nb_espaces = self.nb_elements - 1
         
         # Calculer l'espace entre les éléments
-        total_espace = self.hauteur * self.taux_espace_align
-        espace = total_espace / nb_espaces
+        if nb_espaces > 0:
+            total_espace = self.hauteur * self.taux_espace_align
+            espace = total_espace / nb_espaces
+        else:
+            espace = 0
 
         # Calculer la hauteur des éléments
-        hauteur_elements = self.hauteur - total_espace
-        hauteur = hauteur_elements / self.nb_elements
+        if nb_espaces > 0:
+            hauteur_elements = self.hauteur - total_espace
+            hauteur = hauteur_elements / self.nb_elements
+        else:
+            hauteur = self.hauteur
 
         # Placer les éléments
         for num, element in enumerate(self.elements):
+            print(type(element))
             element.hauteur = hauteur
             element.y = self.y + (element.hauteur * num) + (espace * num)
+            print(element.x)
     
     def centrerLargeur(self):
         return jeu.largeur / 2 - self.largeur / 2
@@ -159,7 +181,7 @@ class Flexbox:
 
 
 class Boutons:
-    def __init__(self, fenetre, texte, x, y, largeur, hauteur, couleur = (255, 255, 255), couleur_texte = (0, 0, 0), largeur_cote = 0, arrondissements_bords = 0, arrondissement_haut_gauche = 0, arrondissement_haut_droit = 0, arrondissement_bas_gauche = 0, arrondissement_bas_droit = 0, action = None, page = None, ombre_offset=5, ombre_couleur=(255, 255, 255)) -> None:
+    def __init__(self, fenetre, texte, x, y, largeur, hauteur, couleur = (255, 255, 255), couleur_texte = (0, 0, 0), largeur_cote = 0, arrondissements_bords = 0, arrondissement_haut_gauche = 0, arrondissement_haut_droit = 0, arrondissement_bas_gauche = 0, arrondissement_bas_droit = 0, action = None, page = None, ombre_offset=5, ombre_couleur=(255, 255, 255), liste_texte = []) -> None:
         """Cette méthode permet d'initialiser un bouton
 
         Args:
@@ -213,6 +235,15 @@ class Boutons:
         self.ombre_couleur = ombre_couleur
         self.ombre = True
         
+        # Liste de texte
+        self.liste_texte = liste_texte
+        
+        if self.liste_texte != []:
+            self.texte = []
+            for texte in self.liste_texte:
+                self.texte.append(jeu.police.render(texte, True, couleur_texte))
+        
+        
     
     def afficher(self, fenetre):
         """Cette méthode permet d'afficher le bouton à l'écran
@@ -238,7 +269,11 @@ class Boutons:
                         self.arrondissement_bas_droit)
         
         # Dessiner le texte
-        fenetre.blit(self.texte, (self.x + (self.largeur / 2 - self.texte.get_width() / 2), self.y + (self.hauteur / 2 - self.texte.get_height() / 2)))
+        if len(self.liste_texte) > 1:
+            for num, texte in enumerate(self.texte):
+                fenetre.blit(texte, (self.x + (self.largeur / 2 - texte.get_width() / 2), self.y + (self.hauteur / 2 - texte.get_height() / 2) + (num * texte.get_height())))
+        else:
+            fenetre.blit(self.texte, (self.x + (self.largeur / 2 - self.texte.get_width() / 2), self.y + (self.hauteur / 2 - self.texte.get_height() / 2)))
 
         if not self.ombre:
             encadrement_rect = pygame.Rect(self.x, self.y, self.largeur, self.hauteur)
@@ -341,7 +376,7 @@ class Accueil(Page):
                                      arrondissement_haut_gauche = 10, arrondissement_haut_droit = 10,
                                      arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35,
                                      page = Options)
-        
+
         self.boutonAide = Boutons(jeu.fenetre, "Aide", 100, 100, 350, 80, (30, 30, 30), (255, 255, 255),
                                   arrondissement_haut_gauche = 10, arrondissement_haut_droit = 10,
                                   arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35)
@@ -355,8 +390,31 @@ class Accueil(Page):
                                      arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35,
                                      action = "Quitter")
         
-        self.boutons = [self.boutonJouer, self.boutonOptions, self.boutonAide, self.boutonScores, self.boutonQuitter]
-        menu = Flexbox(self.boutons, 0.20, 0.45, flex_direction="column", align_content="space-between", taux_espace_align=0.1, centrer_largeur=True, y = 0.45)
+        self.boutonBoutique = Boutons(jeu.fenetre, "Boutique", 100, 100, 350, 80, (30, 30, 30), (255, 255, 255),
+                                arrondissement_haut_gauche = 10, arrondissement_haut_droit = 10,
+                                arrondissement_bas_gauche = 35, arrondissement_bas_droit = 35, liste_texte=["Boutique", "en ligne", "de la", "NSI"])
+        
+        self.boutonCompte = Boutons(jeu.fenetre, "Compte", 100, 100, 350, 80, (30, 30, 30), (255, 255, 255),
+                                    arrondissement_haut_gauche=10, arrondissement_haut_droit=10,
+                                    arrondissement_bas_gauche=35, arrondissement_bas_droit=35)
+        
+        self.boutonJPersonnalisation = Boutons(jeu.fenetre, "Personnalisation", 100, 100, 350, 80, (30, 30, 30), (255, 255, 255),
+                                           arrondissement_haut_gauche=10, arrondissement_haut_droit=10,
+                                           arrondissement_bas_gauche=35, arrondissement_bas_droit=35)
+        
+        
+        self.boutons1 = [self.boutonJouer, self.boutonOptions, self.boutonAide, self.boutonScores, self.boutonQuitter]
+        self.boutons2 = [self.boutonCompte, self.boutonJPersonnalisation]
+        self.boutons3 = [self.boutonBoutique]
+        
+        self.boutons = self.boutons1 + self.boutons2 + self.boutons3
+        
+        menu = Flexbox(self.boutons1, 0.20, 0.45, flex_direction="column", align_content="space-between", taux_espace_align=0.1, centrer_largeur=True, y = 0.45)
+        menu2 = Flexbox(self.boutons2, 0.20, 0.45, flex_direction="column", align_content="space-between", taux_espace_align=0.1, centrer_largeur=True, y = 0.45)
+        menu3 = Flexbox(self.boutons3, 0.20, 0.45, flex_direction="column", align_content="space-between", taux_espace_align=0.1, centrer_largeur=True, y = 0.45)
+        liste_menu = [menu2, menu, menu3]
+        menu4 = Flexbox(liste_menu, 0.90, 0.45, flex_direction="row", justify_content="space-between", taux_espace_justify=0.1, centrer_largeur=True, y = 0.45)
+        
 class Niveaux(Page):
     def __init__(self) -> None:
         self.boutonAccueil = Boutons(jeu.fenetre, "Accueil", 100, 100, 200, 100, (150, 178, 233), (255, 255, 255), 10, page = Accueil).centrer(jeu.largeur, jeu.hauteur)
@@ -381,8 +439,8 @@ class Jeu:
         pygame.init()
         self.fps = 60
         
-        self.largeur = 2560# 3840
-        self.hauteur = 1440# 2160
+        self.largeur = 1920# 3840 | 2560
+        self.hauteur = 1080# 2160 | 1440
         self.fenetre = pygame.display.set_mode((self.largeur, self.hauteur))
         
         self.police = pygame.font.SysFont("Arial", 30)
@@ -408,7 +466,6 @@ class Jeu:
         position_souris_temp = pygame.mouse.get_pos()
         if position_souris_temp != self.position_souris:
             self.position_souris = position_souris_temp
-            
             # Si le bouton est survolé, il change de couleur et s'enfonce
             for bouton in self.page.boutons:
                     if bouton.survoler():
