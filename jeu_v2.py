@@ -878,15 +878,15 @@ class Jeu:
         self.horloge = pygame.time.Clock()
         
         # Chargement des images
-        self.imageMenu = pygame.image.load("Casse-briques-main/img/Menu.jpg").convert()
+        self.imageMenu = pygame.image.load("img/Menu.jpg").convert()
         self.imageMenu = pygame.transform.scale_by(self.imageMenu, (self.largeur / self.imageMenu.get_width()))
         
-        self.imageJeu = pygame.image.load("Casse-briques-main/img/fond_blanc.jpg").convert()
+        self.imageJeu = pygame.image.load("img/fond_blanc.jpg").convert()
         self.imageJeu = pygame.transform.scale_by(self.imageJeu, (self.largeur / self.imageJeu.get_width()))
         
         # Police
-        self.policeOrig = "Casse-briques-main/font/PressStart2P-Regular.ttf"
-        self.police = pygame.font.Font("Casse-briques-main/font/PressStart2P-Regular.ttf", 27)
+        self.policeOrig = "font/PressStart2P-Regular.ttf"
+        self.police = pygame.font.Font("font/PressStart2P-Regular.ttf", 27)
         
         self.executer = True
         self.niveauPrec = None
